@@ -4,15 +4,29 @@ import "@babylonjs/loaders/glTF"
 import * as BABYLON from "@babylonjs/core"
 import * as BRIX from "@ludum_studios/brix-core"
 
+import { Shooting } from "./Bullet/shooting"
+
 export class Main{
+
+
+
     private world;
     private view ;
     private started;
     private onReady: Function;
 
+
+    // References
+    private shooting:Shooting = new Shooting();
+
+    private movingSpeed = 10;
+
     constructor(view) {
         this.view = view;
         this.started = true;
+
+        // this.world.getEngine().stencil = true;
+        //Per te rregulluar errorin e materialeve duhet te besh enable stencil nga engine
     }
 
 
@@ -33,6 +47,7 @@ export class Main{
     public async setup(onReady: Function) {
         await this.setWorld(null);
         await this.createShip(); 
+        await this.shooting.createBullet(this.world);
         this.onReady = onReady;
     
         this.world.start();
@@ -44,12 +59,6 @@ export class Main{
         await this.world.init(true, true);
         const cameraController: BRIX.CameraController = await this.world.registerComponent(BRIX.ArcRotateCameraController);
         cameraController.getCamera().position = new BABYLON.Vector3(0,100,0);
-        // cameraController.getCamera().rotation = new BABYLON.Vector3(0,0,-10);
-        
-
-
-        console.log(cameraController.getCamera().position.x);
-        // cameraController.getCamera().lockedTarget = BABYLON.Vector3.Zero();
         cameraController.getCamera().radius = 700;
         cameraController.getCamera().alpha = -1.57;
         cameraController.getCamera().beta = -10;
@@ -67,6 +76,18 @@ export class Main{
         const meshComponent: BRIX.MeshComponent = await player.registerComponent(BRIX.MeshComponent);
         await meshComponent.loadAsync("assets/Ship/","ship.glb");         
         meshComponent.get().position = new BABYLON.Vector3(0,0,-200);
-        console.log("Player Components: " , player.components);        
+        meshComponent.get().scaling = new BABYLON.Vector3(1.5,1.5,1.5);        
+
+        console.log("Player Components: " , player.components);
+
+        window.addEventListener("keydown", (ev) => {
+            if(ev.keyCode == 65){
+                meshComponent.move(new BABYLON.Vector3(-this.movingSpeed,0,0));
+            }
+
+            if(ev.keyCode == 68){
+                meshComponent.move(new BABYLON.Vector3(this.movingSpeed,0,0));
+            }
+        });
     }
 }
