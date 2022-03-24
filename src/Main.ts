@@ -4,20 +4,15 @@ import "@babylonjs/loaders/glTF"
 import * as BABYLON from "@babylonjs/core"
 import * as BRIX from "@ludum_studios/brix-core"
 
-import { Shooting } from "./Bullet/shooting"
+import { LaserComponent } from "./Bullet/LaserComponent"
 
 export class Main{
 
-
-
+    private enableToShoot: Boolean = false;
     private world;
     private view ;
     private started;
     private onReady: Function;
-
-
-    // References
-    private shooting:Shooting = new Shooting();
 
     private movingSpeed = 10;
 
@@ -26,7 +21,7 @@ export class Main{
         this.started = true;
 
         // this.world.getEngine().stencil = true;
-        //Per te rregulluar errorin e materialeve duhet te besh enable stencil nga engine
+        // Per te rregulluar errorin e materialeve duhet te besh enable stencil nga engine
     }
 
 
@@ -47,7 +42,6 @@ export class Main{
     public async setup(onReady: Function) {
         await this.setWorld(null);
         await this.createShip(); 
-        await this.shooting.createBullet(this.world);
         this.onReady = onReady;
     
         this.world.start();
@@ -69,6 +63,8 @@ export class Main{
         lightComponent.intensity = 1;
         let cubeSkyBox: BRIX.CubeSkyBoxComponent = await this.world.registerComponent(BRIX.CubeSkyBoxComponent);
 		cubeSkyBox.texturePath = "assets/textures/skybox/skybox";
+
+        console.log(this.world.getEngine());
     }
 
     private async createShip(){
@@ -77,6 +73,9 @@ export class Main{
         await meshComponent.loadAsync("assets/Ship/","ship.glb");         
         meshComponent.get().position = new BABYLON.Vector3(0,0,-200);
         meshComponent.get().scaling = new BABYLON.Vector3(1.5,1.5,1.5);        
+
+        const laserComponent = await player.registerComponent(LaserComponent);
+        const laserComponent2 = await player.registerComponent(LaserComponent);
 
         console.log("Player Components: " , player.components);
 
@@ -87,6 +86,15 @@ export class Main{
 
             if(ev.keyCode == 68){
                 meshComponent.move(new BABYLON.Vector3(this.movingSpeed,0,0));
+            }
+            setTimeout(() => {
+                this.enableToShoot = true;
+            }, 2000);
+            if(this.enableToShoot){
+                if(ev.keyCode == 32){
+                    laserComponent.createBullet();
+                    this.enableToShoot = false;
+                }
             }
         });
     }
