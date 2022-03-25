@@ -42,6 +42,7 @@ export class Main{
     public async setup(onReady: Function) {
         await this.setWorld(null);
         await this.createShip(); 
+        await this.createDumpMesh();
         this.onReady = onReady;
     
         this.world.start();
@@ -75,7 +76,6 @@ export class Main{
         meshComponent.get().scaling = new BABYLON.Vector3(1.5,1.5,1.5);        
 
         const laserComponent = await player.registerComponent(LaserComponent);
-        const laserComponent2 = await player.registerComponent(LaserComponent);
 
         console.log("Player Components: " , player.components);
 
@@ -90,12 +90,21 @@ export class Main{
             setTimeout(() => {
                 this.enableToShoot = true;
             }, 2000);
-            if(this.enableToShoot){
+            // if(this.enableToShoot){
                 if(ev.keyCode == 32){
-                    laserComponent.createBullet();
+                    laserComponent.fire();
                     this.enableToShoot = false;
                 }
-            }
+            // }
         });
+    }
+
+    async createDumpMesh(){
+        const dump:BRIX.GameObject = new BRIX.GameObject("dumpy", this.world);
+        const setShapeComponent: BRIX.SetShapesComponent = await dump.registerComponent(BRIX.SetShapesComponent);
+        setShapeComponent.meshType = BRIX.MeshType.CYLINDER;
+        const meshComponent: BRIX.MeshComponent = (dump.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent );
+        meshComponent.get().scaling = new BABYLON.Vector3(10,10,10);
+        meshComponent.get().position = new BABYLON.Vector3(0,0,10);
     }
 }
