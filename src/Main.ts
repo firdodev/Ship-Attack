@@ -5,6 +5,7 @@ import * as BABYLON from "@babylonjs/core"
 import * as BRIX from "@ludum_studios/brix-core"
 
 import { LaserComponent } from "./Bullet/LaserComponent"
+import { LightManagerComponent } from "./Components/LightManagerComponent"
 
 export class Main{
 
@@ -13,6 +14,8 @@ export class Main{
     private view ;
     private started;
     private onReady: Function;
+
+    private test = 0;
 
     private movingSpeed = 10;
 
@@ -57,15 +60,13 @@ export class Main{
         cameraController.getCamera().radius = 700;
         cameraController.getCamera().alpha = -1.57;
         cameraController.getCamera().beta = -10;
-        cameraController.getCamera().upperRadiusLimit = 700;
-        cameraController.getCamera().lowerRadiusLimit = 500;
+        // cameraController.getCamera().upperRadiusLimit = 700;
+        // cameraController.getCamera().lowerRadiusLimit = 500;
 
         const lightComponent: BRIX.LightComponent = await this.world.registerComponent(BRIX.HemisphericLightComponent);
-        lightComponent.intensity = 1;
+        lightComponent.intensity = 0.5;
         let cubeSkyBox: BRIX.CubeSkyBoxComponent = await this.world.registerComponent(BRIX.CubeSkyBoxComponent);
 		cubeSkyBox.texturePath = "assets/textures/skybox/skybox";
-
-        console.log(this.world.getEngine());
     }
 
     private async createShip(){
@@ -75,36 +76,54 @@ export class Main{
         meshComponent.get().position = new BABYLON.Vector3(0,0,-200);
         meshComponent.get().scaling = new BABYLON.Vector3(1.5,1.5,1.5);        
 
-        const laserComponent = await player.registerComponent(LaserComponent);
+        // const laserComponent = await player.registerComponent(LaserComponent);
 
         console.log("Player Components: " , player.components);
+
+        // await laserComponent.createLaser();
+        // await laserComponent.createLaser();
+        // await laserComponent.createLaser();
+        // await laserComponent.createLaser();
+        // await laserComponent.createLaser();
+
 
         window.addEventListener("keydown", (ev) => {
             if(ev.keyCode == 65){
                 meshComponent.move(new BABYLON.Vector3(-this.movingSpeed,0,0));
+                console.log(meshComponent.position);
             }
-
             if(ev.keyCode == 68){
                 meshComponent.move(new BABYLON.Vector3(this.movingSpeed,0,0));
+                console.log(meshComponent.position);
             }
-            setTimeout(() => {
-                this.enableToShoot = true;
-            }, 2000);
-            // if(this.enableToShoot){
-                if(ev.keyCode == 32){
-                    laserComponent.fire();
-                    this.enableToShoot = false;
-                }
-            // }
+            if(ev.keyCode == 32){
+                var laserComp = new LaserComponent();
+                laserComp.createLaser(this.world);
+                this.enableToShoot = false;
+                this.test+=30;
+                this.createDumpMesh();
+            }
         });
+
+        this.world.getScene().updateBeforeRender(()=>{
+            console.log("Update Message");
+        })
     }
 
     async createDumpMesh(){
         const dump:BRIX.GameObject = new BRIX.GameObject("dumpy", this.world);
-        const setShapeComponent: BRIX.SetShapesComponent = await dump.registerComponent(BRIX.SetShapesComponent);
-        setShapeComponent.meshType = BRIX.MeshType.CYLINDER;
-        const meshComponent: BRIX.MeshComponent = (dump.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent );
-        meshComponent.get().scaling = new BABYLON.Vector3(10,10,10);
-        meshComponent.get().position = new BABYLON.Vector3(0,0,10);
+        const meshComponent: BRIX.MeshComponent = await dump.registerComponent(BRIX.MeshComponent);
+        await meshComponent.loadAsync("assets/Asteroid/","Asteroid2.glb");
+        meshComponent.get().scaling = new BABYLON.Vector3(30,30,30);
+        meshComponent.get().position = new BABYLON.Vector3(this.test,0,50);
+        meshComponent.get().material.subMaterials[0].bumpTexture = new BABYLON.Texture("assets/Asteroid/Normal.jpg",this.world.getScene());
+        meshComponent.get().material.subMaterials[0].emissiveTexture = new BABYLON.Texture("assets/Asteroid/Emission.jpg", this.world.getScene(), false, false);
+        let lightManager = await dump.registerComponent(LightManagerComponent);
+        lightManager.nrOfSeconds = 0.2;
+        lightManager.flickerRate = 3;
+
+        // var gl = new BABYLON.GlowLayer("glow", this.world.getScene());
+
+        console.log("Asteroid Components: ", meshComponent.get().material.subMaterials[0].bumpTexture);
     }
 }
