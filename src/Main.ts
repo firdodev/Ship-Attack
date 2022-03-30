@@ -64,16 +64,22 @@ export class Main{
         // cameraController.getCamera().lowerRadiusLimit = 500;
 
 
+        let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
+        pipeline.hasBloom = true;
+        pipeline.bloomWeight = 1;
+
         //Pipline Configuration
-        var pipeline : BABYLON.DefaultRenderingPipeline = new BABYLON.DefaultRenderingPipeline("pipeline", false, this.world.getScene(),[cameraController.getCamera()]);
+        //var pipeline : BABYLON.DefaultRenderingPipeline = new BABYLON.DefaultRenderingPipeline("pipeline", false, this.world.getScene(),[cameraController.getCamera()]);
         //Vignette
-        pipeline.imageProcessing.vignetteEnabled = true;
-        pipeline.imageProcessing.vignetteWeight = 5;
+        // pipeline.imageProcessing.vignetteEnabled = true;
+        // pipeline.imageProcessing.vignetteWeight = 5;
         
         //Bloom
-        pipeline.bloomEnabled = true;
-        pipeline.bloomWeight = 1;        
-        
+        // pipeline.bloomThreshold = 0.8;
+        // pipeline.bloomWeight = 0.3;
+        // pipeline.bloomKernel = 64;
+        // pipeline.bloomScale = 0.5;        
+
         // cameraController.getCamera().detachControl(); // Removes control of camera
 
         const lightComponent: BRIX.LightComponent = await this.world.registerComponent(BRIX.HemisphericLightComponent);
@@ -124,7 +130,8 @@ export class Main{
         lightManager.flickerRate = 3;
 
         // var gl = new BABYLON.GlowLayer("glow", this.world.getScene());
-
+        let h1:BRIX.HighlightLayerComponent = await dump.registerComponent(BRIX.HighlightLayerComponent);
+        h1.add(meshComponent.get(),new BABYLON.Color3(0,0,1));
         console.log("Asteroid Components: ", meshComponent.get().material.subMaterials[0].bumpTexture);
     }
 }

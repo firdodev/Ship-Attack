@@ -56,3 +56,19 @@ export class LaserComponent extends BRIX.Component {
     updateAfterRender = () => {
     }
 }
+
+
+
+
+
+//Ray
+this.shipPosition = new BABYLON.Vector3(this.shipPosition.x,this.shipPosition.y,this.shipPosition.z + 10);
+        const forward = BABYLON.Vector3.Forward();
+        const ray = new BABYLON.Ray(this.shipPosition,forward,1);
+        let rayHelper = new BABYLON.RayHelper(ray);		
+		rayHelper.show((this.object as BRIX.GameObject).getWorld().getScene() as unknown as BABYLON.Scene, new BABYLON.Color3(1,0,0));
+        const hit = ((this.object as BRIX.GameObject).getWorld().getScene() as unknown as BABYLON.Scene).pickWithRay(ray);
+        if(hit.pickedMesh){
+            console.log(hit.pickedMesh.name);
+            hit.pickedMesh.dispose();
+        }
