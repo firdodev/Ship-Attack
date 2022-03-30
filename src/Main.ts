@@ -76,7 +76,7 @@ export class Main{
         meshComponent.get().position = new BABYLON.Vector3(0,0,-200);
         meshComponent.get().scaling = new BABYLON.Vector3(1.5,1.5,1.5);        
 
-        // const laserComponent = await player.registerComponent(LaserComponent);
+        const laserComponent = await player.registerComponent(LaserComponent);
 
         console.log("Player Components: " , player.components);
 
@@ -87,7 +87,7 @@ export class Main{
         // await laserComponent.createLaser();
 
 
-        window.addEventListener("keydown", (ev) => {
+        window.addEventListener("keydown", async (ev) => {
             if(ev.keyCode == 65){
                 meshComponent.move(new BABYLON.Vector3(-this.movingSpeed,0,0));
                 console.log(meshComponent.position);
@@ -97,17 +97,12 @@ export class Main{
                 console.log(meshComponent.position);
             }
             if(ev.keyCode == 32){
-                var laserComp = new LaserComponent();
-                laserComp.createLaser(this.world);
+                await laserComponent.createLaser();
                 this.enableToShoot = false;
                 this.test+=30;
-                this.createDumpMesh();
+                // this.createDumpMesh();
             }
         });
-
-        this.world.getScene().updateBeforeRender(()=>{
-            console.log("Update Message");
-        })
     }
 
     async createDumpMesh(){
