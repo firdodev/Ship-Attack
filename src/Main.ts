@@ -63,6 +63,19 @@ export class Main{
         // cameraController.getCamera().upperRadiusLimit = 700;
         // cameraController.getCamera().lowerRadiusLimit = 500;
 
+
+        //Pipline Configuration
+        var pipeline : BABYLON.DefaultRenderingPipeline = new BABYLON.DefaultRenderingPipeline("pipeline", false, this.world.getScene(),[cameraController.getCamera()]);
+        //Vignette
+        pipeline.imageProcessing.vignetteEnabled = true;
+        pipeline.imageProcessing.vignetteWeight = 5;
+        
+        //Bloom
+        pipeline.bloomEnabled = true;
+        pipeline.bloomWeight = 1;        
+        
+        // cameraController.getCamera().detachControl(); // Removes control of camera
+
         const lightComponent: BRIX.LightComponent = await this.world.registerComponent(BRIX.HemisphericLightComponent);
         lightComponent.intensity = 0.5;
         let cubeSkyBox: BRIX.CubeSkyBoxComponent = await this.world.registerComponent(BRIX.CubeSkyBoxComponent);
@@ -80,13 +93,6 @@ export class Main{
 
         console.log("Player Components: " , player.components);
 
-        // await laserComponent.createLaser();
-        // await laserComponent.createLaser();
-        // await laserComponent.createLaser();
-        // await laserComponent.createLaser();
-        // await laserComponent.createLaser();
-
-
         window.addEventListener("keydown", async (ev) => {
             if(ev.keyCode == 65){
                 meshComponent.move(new BABYLON.Vector3(-this.movingSpeed,0,0));
@@ -98,9 +104,9 @@ export class Main{
             }
             if(ev.keyCode == 32){
                 await laserComponent.createLaser();
+                console.log("Shooting");
                 this.enableToShoot = false;
                 this.test+=30;
-                // this.createDumpMesh();
             }
         });
     }
