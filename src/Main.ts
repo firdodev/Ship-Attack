@@ -5,9 +5,13 @@ import * as BABYLON from "@babylonjs/core"
 import * as BRIX from "@ludum_studios/brix-core"
 
 import { LaserComponent } from "./Bullet/LaserComponent"
-import { LightManagerComponent } from "./Components/LightManagerComponent"
+import { Asteroid } from "./Asteroid"
 
 export class Main{
+
+    // private laserComp: LaserComponent;
+
+    private asteroid: Asteroid = new Asteroid();
 
     private enableToShoot: Boolean = false;
     private world;
@@ -18,6 +22,7 @@ export class Main{
     private test = 0;
 
     private movingSpeed = 10;
+    public asteroidArray;
 
     constructor(view) {
         this.view = view;
@@ -45,7 +50,17 @@ export class Main{
     public async setup(onReady: Function) {
         await this.setWorld(null);
         await this.createShip(); 
-        await this.createDumpMesh();
+
+        
+        for (let i = 0; i < 3; i++) {
+            await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(i,0,0));
+        }
+        for (let i = 0; i < 3; i++) {
+            this.asteroid.addToArray(Asteroid.asteroidsCreated);
+        }
+        console.log(this.asteroidArray);
+
+        // await this.createGrid(); // Create a grid where asteroid can be stored
         this.onReady = onReady;
     
         this.world.start();
@@ -68,20 +83,6 @@ export class Main{
         pipeline.hasBloom = true;
         pipeline.bloomWeight = 1;
 
-        //Pipline Configuration
-        //var pipeline : BABYLON.DefaultRenderingPipeline = new BABYLON.DefaultRenderingPipeline("pipeline", false, this.world.getScene(),[cameraController.getCamera()]);
-        //Vignette
-        // pipeline.imageProcessing.vignetteEnabled = true;
-        // pipeline.imageProcessing.vignetteWeight = 5;
-        
-        //Bloom
-        // pipeline.bloomThreshold = 0.8;
-        // pipeline.bloomWeight = 0.3;
-        // pipeline.bloomKernel = 64;
-        // pipeline.bloomScale = 0.5;        
-
-        // cameraController.getCamera().detachControl(); // Removes control of camera
-
         const lightComponent: BRIX.LightComponent = await this.world.registerComponent(BRIX.HemisphericLightComponent);
         lightComponent.intensity = 0.5;
         let cubeSkyBox: BRIX.CubeSkyBoxComponent = await this.world.registerComponent(BRIX.CubeSkyBoxComponent);
@@ -94,7 +95,6 @@ export class Main{
         await meshComponent.loadAsync("assets/Ship/","ship.glb");         
         meshComponent.get().position = new BABYLON.Vector3(0,0,-200);
         meshComponent.get().scaling = new BABYLON.Vector3(1.5,1.5,1.5);        
-
         const laserComponent = await player.registerComponent(LaserComponent);
 
         console.log("Player Components: " , player.components);
@@ -117,21 +117,12 @@ export class Main{
         });
     }
 
-    async createDumpMesh(){
-        const dump:BRIX.GameObject = new BRIX.GameObject("dumpy", this.world);
-        const meshComponent: BRIX.MeshComponent = await dump.registerComponent(BRIX.MeshComponent);
-        await meshComponent.loadAsync("assets/Asteroid/","Asteroid2.glb");
-        meshComponent.get().scaling = new BABYLON.Vector3(30,30,30);
-        meshComponent.get().position = new BABYLON.Vector3(this.test,0,50);
-        meshComponent.get().material.subMaterials[0].bumpTexture = new BABYLON.Texture("assets/Asteroid/Normal.jpg",this.world.getScene());
-        meshComponent.get().material.subMaterials[0].emissiveTexture = new BABYLON.Texture("assets/Asteroid/Emission.jpg", this.world.getScene(), false, false);
-        let lightManager = await dump.registerComponent(LightManagerComponent);
-        lightManager.nrOfSeconds = 0.2;
-        lightManager.flickerRate = 3;
-
-        // var gl = new BABYLON.GlowLayer("glow", this.world.getScene());
-        let h1:BRIX.HighlightLayerComponent = await dump.registerComponent(BRIX.HighlightLayerComponent);
-        h1.add(meshComponent.get(),new BABYLON.Color3(0,0,1));
-        console.log("Asteroid Components: ", meshComponent.get().material.subMaterials[0].bumpTexture);
+    async createGrid(){
+        const grid: BRIX.GameObject = new BRIX.GameObject("grid", this.world);
+        const setShapesComponent :BRIX.SetShapesComponent = await grid.registerComponent(BRIX.SetShapesComponent);
+        setShapesComponent.meshType = BRIX.MeshType.BOX;
+        const meshComponent: BRIX.MeshComponent = ( grid.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent);
+        // meshComponent.get().scaling = new BABYLON.Vector3(50,50,50);
+        // meshComponent.get().visibility = 
     }
 }

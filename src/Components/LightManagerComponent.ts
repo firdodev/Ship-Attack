@@ -9,7 +9,6 @@ export class LightManagerComponent extends BRIX.Component{
   
     constructor(object: BRIX.GameObject, name: string) {
       super(object, name);
-  
 
       this.color2 = new BABYLON.Color3(1,1,1);
     }
@@ -19,12 +18,11 @@ export class LightManagerComponent extends BRIX.Component{
       (this.object.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent).get().material.subMaterials[0].emissiveColor = color;
     }
   
-    updateBeforeRender = () => { 
-
+    updateBeforeRender = () => {
         this.changeColor(this.color2);
     }
   
     updateAfterRender = () => {
-   }
+    }
    
 }
