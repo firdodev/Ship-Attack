@@ -51,12 +51,9 @@ export class Main{
         await this.setWorld(null);
         await this.createShip(); 
 
-        
+        //Saving everything in an array
         for (let i = 0; i < 3; i++) {
-            await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(i,0,0));
-        }
-        for (let i = 0; i < 3; i++) {
-            this.asteroid.addToArray(Asteroid.asteroidsCreated);
+            await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(this.randomIntFromInterval(-100,100),0,0));
         }
         console.log(this.asteroidArray);
 
@@ -124,5 +121,10 @@ export class Main{
         const meshComponent: BRIX.MeshComponent = ( grid.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent);
         // meshComponent.get().scaling = new BABYLON.Vector3(50,50,50);
         // meshComponent.get().visibility = 
+    }
+
+
+    private randomIntFromInterval(min, max) { 
+        return Math.floor(Math.random() * (max - min + 1) + min)
     }
 }

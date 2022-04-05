@@ -35,20 +35,20 @@ export class LaserComponent extends BRIX.Component {
     }
     
     async checkAsteroidTouching(){
-    //    for(let i = 0; i < Asteroid.asteroidsCreated; i++){
-    //         if(this.meshComponent.get().intersectsMesh(this.getAsteroid(2),true)){
-    //             console.log("Touching Asteroid");
-    //             this.getAsteroid(2).dispose();
-    //             this.bullet.dispose();
-    //         }else{
-    //             console.log("Not touching asteroid");
-    //         }
-    //     }
+       for(let i = 0; i < Asteroid.asteroidsCreated.length; i++){
+            if(this.meshComponent.get().intersectsMesh(this.getAsteroid(i),true)){
+                console.log("Touching Asteroid");
+                this.getAsteroid(i).dispose();
+                this.bullet.dispose();
+            }else{
+                console.log("Not touching asteroid");
+            }
+        }
     }
 
     private getAsteroid(index){
         
-        return Asteroid.asteroidsCreated[index];
+        return Asteroid.asteroidsCreated[index].get();
         
     }
     async createLaser(){

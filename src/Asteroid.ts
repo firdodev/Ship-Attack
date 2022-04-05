@@ -10,7 +10,7 @@ export class Asteroid{
 
     public static asteroidMesh: BRIX.MeshComponent;
     private asteroidSize = 30;
-    public static asteroidsCreated = 0;
+    public static asteroidsCreated = [];
 
     async  createAsteroidMesh(world,position: BABYLON.Vector3){
         const asteroid:BRIX.GameObject = new BRIX.GameObject("dumpy", world);
@@ -24,8 +24,9 @@ export class Asteroid{
         lightManager.nrOfSeconds = 0.2;
         lightManager.flickerRate = 3;
         
+        this.addAsteroidToArrary(Asteroid.asteroidMesh);
+
         console.log("Asteroid Components: ", asteroid.components);
-        Asteroid.asteroidsCreated += 1;
         console.log("There are ", Asteroid.asteroidsCreated, " asteroids created.");
         // console.log("Position of Asteroid: " + this.getAsteroidPositon());
     }
@@ -34,10 +35,8 @@ export class Asteroid{
         return Asteroid.asteroidMesh.get().position;
     }
 
-    public addToArray(array){
-        for (let i = 0; i < array.length; i++) {
-            array.push(this.getAsteroidPositon());
-        }
+    public addAsteroidToArrary(asteroid: BRIX.MeshComponent){
+        Asteroid.asteroidsCreated.push(asteroid);
     }
 
     
