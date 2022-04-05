@@ -36,12 +36,16 @@ export class LaserComponent extends BRIX.Component {
     
     async checkAsteroidTouching(){
        for(let i = 0; i < Asteroid.asteroidsCreated.length; i++){
-            if(this.meshComponent.get().intersectsMesh(this.getAsteroid(i),true)){
-                console.log("Touching Asteroid");
-                this.getAsteroid(i).dispose();
-                this.bullet.dispose();
+            if(Asteroid.asteroidsCreated.length > 0){
+                if(this.meshComponent.get().intersectsMesh(this.getAsteroid(i),true)){
+                    console.log("Touching Asteroid");
+                    this.getAsteroid(i).dispose();
+                    this.bullet.dispose();
+                }else{
+                    // console.log("Not touching asteroid");
+                }
             }else{
-                console.log("Not touching asteroid");
+                console.log("No asteroids");
             }
         }
     }
@@ -58,7 +62,11 @@ export class LaserComponent extends BRIX.Component {
             await this.meshComponent.loadAsync("assets/Ship/","missle.glb");
             this.meshComponent.get().scaling = new BABYLON.Vector3(10,10,10);
             this.meshComponent.get().position = new BABYLON.Vector3(this.shipPosition.x,0,this.shipPosition.z);
+            this.meshComponent.get().material.subMaterials[0].emissiveColor = new BABYLON.Color3(1, 0, 0);
+            console.log("material", this.meshComponent.get().material);
+
             this.isCreated = true;
+
         }
     }
     
@@ -68,7 +76,6 @@ export class LaserComponent extends BRIX.Component {
             this.meshComponent.move(new BABYLON.Vector3(0,0,2));
             this.shipPosition.z = this.meshComponent.get().position.z;
             this.checkAsteroidTouching();
-            console.log("Asteroid Pos: ",this.getAsteroid(2));
             if(this.time >= this.timeCheck){                
                 this.bullet.dispose();
                 this.isCreated = false;
@@ -76,7 +83,7 @@ export class LaserComponent extends BRIX.Component {
                 this.time = 0;
             }
             this.time += 1;
-            console.log(this.shipPosition);          
+            // console.log(this.shipPosition); // Shows the position of the laser        
         }
     }
 

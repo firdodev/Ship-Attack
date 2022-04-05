@@ -15,7 +15,7 @@ export class LightManagerComponent extends BRIX.Component{
   
     
     private changeColor(color: BABYLON.Color3){
-      (this.object.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent).get().material.subMaterials[0].emissiveColor = color;
+      (this.object.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent).get().material.subMaterials[0].emissiveColor = color;      
     }
   
     updateBeforeRender = () => {

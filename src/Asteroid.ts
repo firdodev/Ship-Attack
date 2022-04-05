@@ -39,5 +39,9 @@ export class Asteroid{
         Asteroid.asteroidsCreated.push(asteroid);
     }
 
+    public getAsteroidMesh(): BRIX.MeshComponent{
+        return Asteroid.asteroidMesh;
+    }
+
     
 }

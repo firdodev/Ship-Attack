@@ -4,7 +4,7 @@ import "@babylonjs/loaders/glTF"
 import * as BABYLON from "@babylonjs/core"
 import * as BRIX from "@ludum_studios/brix-core"
 
-import { LaserComponent } from "./Bullet/LaserComponent"
+import { LaserComponent } from "./Components/LaserComponent"
 import { Asteroid } from "./Asteroid"
 
 export class Main{
@@ -27,7 +27,6 @@ export class Main{
     constructor(view) {
         this.view = view;
         this.started = true;
-
         // this.world.getEngine().stencil = true;
         // Per te rregulluar errorin e materialeve duhet te besh enable stencil nga engine
     }
@@ -76,14 +75,19 @@ export class Main{
         // cameraController.getCamera().lowerRadiusLimit = 500;
 
 
-        let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
-        pipeline.hasBloom = true;
-        pipeline.bloomWeight = 1;
+        // let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
+        // pipeline.hasBloom = true;
+        // pipeline.bloomWeight = 1;
 
         const lightComponent: BRIX.LightComponent = await this.world.registerComponent(BRIX.HemisphericLightComponent);
         lightComponent.intensity = 0.5;
         let cubeSkyBox: BRIX.CubeSkyBoxComponent = await this.world.registerComponent(BRIX.CubeSkyBoxComponent);
 		cubeSkyBox.texturePath = "assets/textures/skybox/skybox";
+
+        let glowLayer = await this.world.registerComponent(BRIX.GlowLayerComponent);
+        glowLayer.intensity = 0.5;
+      
+
     }
 
     private async createShip(){
@@ -99,11 +103,9 @@ export class Main{
         window.addEventListener("keydown", async (ev) => {
             if(ev.keyCode == 65){
                 meshComponent.move(new BABYLON.Vector3(-this.movingSpeed,0,0));
-                console.log(meshComponent.position);
             }
             if(ev.keyCode == 68){
                 meshComponent.move(new BABYLON.Vector3(this.movingSpeed,0,0));
-                console.log(meshComponent.position);
             }
             if(ev.keyCode == 32){
                 await laserComponent.createLaser();
@@ -112,6 +114,7 @@ export class Main{
                 this.test+=30;
             }
         });
+
     }
 
     async createGrid(){
@@ -120,7 +123,6 @@ export class Main{
         setShapesComponent.meshType = BRIX.MeshType.BOX;
         const meshComponent: BRIX.MeshComponent = ( grid.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent);
         // meshComponent.get().scaling = new BABYLON.Vector3(50,50,50);
-        // meshComponent.get().visibility = 
     }
 
 
