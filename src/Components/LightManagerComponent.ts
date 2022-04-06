@@ -5,7 +5,7 @@ import * as BABYLON from "@babylonjs/core"
 import * as BRIX from "@ludum_studios/brix-core"
 
 export class LightManagerComponent extends BRIX.Component{
-    private color2: BABYLON.Color3;
+    public color2: BABYLON.Color3;
   
     constructor(object: BRIX.GameObject, name: string) {
       super(object, name);

@@ -62,7 +62,7 @@ export class LaserComponent extends BRIX.Component {
             await this.meshComponent.loadAsync("assets/Ship/","missle.glb");
             this.meshComponent.get().scaling = new BABYLON.Vector3(10,10,10);
             this.meshComponent.get().position = new BABYLON.Vector3(this.shipPosition.x,0,this.shipPosition.z);
-            this.meshComponent.get().material.subMaterials[0].emissiveColor = new BABYLON.Color3(1, 0, 0);
+            this.meshComponent.get().material.subMaterials[0].emissiveColor = new BABYLON.Color3(0.5, 0, 0);
             console.log("material", this.meshComponent.get().material);
 
             this.isCreated = true;
@@ -76,7 +76,7 @@ export class LaserComponent extends BRIX.Component {
             this.meshComponent.move(new BABYLON.Vector3(0,0,2));
             this.shipPosition.z = this.meshComponent.get().position.z;
             this.checkAsteroidTouching();
-            if(this.time >= this.timeCheck){                
+            if(this.time >= this.timeCheck){              
                 this.bullet.dispose();
                 this.isCreated = false;
                 this.shipPosition.z = -150;

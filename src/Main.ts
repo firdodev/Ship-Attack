@@ -51,12 +51,11 @@ export class Main{
         await this.createShip(); 
 
         //Saving everything in an array
-        for (let i = 0; i < 3; i++) {
-            await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(this.randomIntFromInterval(-100,100),0,0));
+        for (let i = 0; i < 1; i++) {
+            await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(0,0,0));
         }
-        console.log(this.asteroidArray);
 
-        // await this.createGrid(); // Create a grid where asteroid can be stored
+        await this.createGrid(1,6); // Create a grid where asteroid can be stored
         this.onReady = onReady;
     
         this.world.start();
@@ -73,7 +72,7 @@ export class Main{
         cameraController.getCamera().beta = -10;
         // cameraController.getCamera().upperRadiusLimit = 700;
         // cameraController.getCamera().lowerRadiusLimit = 500;
-
+        // cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
 
         // let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
         // pipeline.hasBloom = true;
@@ -85,7 +84,7 @@ export class Main{
 		cubeSkyBox.texturePath = "assets/textures/skybox/skybox";
 
         let glowLayer = await this.world.registerComponent(BRIX.GlowLayerComponent);
-        glowLayer.intensity = 0.5;
+        glowLayer.intensity = 1;
       
 
     }
@@ -95,9 +94,11 @@ export class Main{
         const meshComponent: BRIX.MeshComponent = await player.registerComponent(BRIX.MeshComponent);
         await meshComponent.loadAsync("assets/Ship/","ship.glb");         
         meshComponent.get().position = new BABYLON.Vector3(0,0,-200);
-        meshComponent.get().scaling = new BABYLON.Vector3(1.5,1.5,1.5);        
-        const laserComponent = await player.registerComponent(LaserComponent);
+        meshComponent.get().scaling = new BABYLON.Vector3(1.5,1.5,1.5);     
 
+        meshComponent.get().material.subMaterials[0].emissiveColor = new BABYLON.Color3(5,5,5);
+
+        const laserComponent = await player.registerComponent(LaserComponent);
         console.log("Player Components: " , player.components);
 
         window.addEventListener("keydown", async (ev) => {
@@ -117,12 +118,22 @@ export class Main{
 
     }
 
-    async createGrid(){
-        const grid: BRIX.GameObject = new BRIX.GameObject("grid", this.world);
-        const setShapesComponent :BRIX.SetShapesComponent = await grid.registerComponent(BRIX.SetShapesComponent);
-        setShapesComponent.meshType = BRIX.MeshType.BOX;
-        const meshComponent: BRIX.MeshComponent = ( grid.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent);
-        // meshComponent.get().scaling = new BABYLON.Vector3(50,50,50);
+    async createGrid(rows: number, cols: number){
+        for (let x = -5; x < cols; x++) {
+            for(let z = 0; z < rows; z++){
+                const grid: BRIX.GameObject = new BRIX.GameObject("grid", this.world);
+                const setShapesComponent :BRIX.SetShapesComponent = await grid.registerComponent(BRIX.SetShapesComponent);
+                setShapesComponent.meshType = BRIX.MeshType.BOX;
+                const meshComponent: BRIX.MeshComponent = ( grid.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent);
+                meshComponent.get().scaling = new BABYLON.Vector3(75,75,75);
+                meshComponent.get().visibility = 0;
+                meshComponent.get().position = new BABYLON.Vector3(x * 75,0,z * 75);
+
+               await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(x * 75,0,z * 75));
+        
+            }
+        }
+        
     }
 
 
