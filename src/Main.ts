@@ -1,5 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer"
 import "@babylonjs/inspector"
+import "@babylonjs/loaders"
+import "babylonjs-loaders"
 import "@babylonjs/loaders/glTF"
 import * as BABYLON from "@babylonjs/core"
 import * as BRIX from "@ludum_studios/brix-core"
@@ -48,14 +50,22 @@ export class Main{
     
     public async setup(onReady: Function) {
         await this.setWorld(null);
-        await this.createShip(); 
+        await this.createShip();
+        await this.createRandomShapes(new BABYLON.Color3(0,30,80));
+        await this.createRandomShapes(new BABYLON.Color3(30,0,80));
+        await this.createRandomShapes(new BABYLON.Color3(50,0,0));
+        await this.createRandomShapes(new BABYLON.Color3(30,80,0));
+        await this.createRandomShapes(new BABYLON.Color3(0,30,0));
+        await this.createRandomShapes(new BABYLON.Color3(30,0,80));
+        await this.createRandomShapes(new BABYLON.Color3(50,0,0));
+        await this.createRandomShapes(new BABYLON.Color3(80,30,0));
 
         //Saving everything in an array
         for (let i = 0; i < 1; i++) {
             await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(0,0,0));
         }
 
-        await this.createGrid(1,6); // Create a grid where asteroid can be stored
+        await this.createGrid(1,3); // Create a grid where asteroid can be stored
         this.onReady = onReady;
     
         this.world.start();
@@ -70,23 +80,24 @@ export class Main{
         cameraController.getCamera().radius = 700;
         cameraController.getCamera().alpha = -1.57;
         cameraController.getCamera().beta = -10;
-        // cameraController.getCamera().upperRadiusLimit = 700;
-        // cameraController.getCamera().lowerRadiusLimit = 500;
-        // cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
+        cameraController.getCamera().upperRadiusLimit = 700;
+        cameraController.getCamera().lowerRadiusLimit = 500;
+        cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
 
-        // let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
-        // pipeline.hasBloom = true;
-        // pipeline.bloomWeight = 1;
+        let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
+        pipeline.hasBloom = true;
+        pipeline.bloomWeight = 0.5;
 
         const lightComponent: BRIX.LightComponent = await this.world.registerComponent(BRIX.HemisphericLightComponent);
-        lightComponent.intensity = 0.5;
+        lightComponent.intensity = 0.3;
         let cubeSkyBox: BRIX.CubeSkyBoxComponent = await this.world.registerComponent(BRIX.CubeSkyBoxComponent);
 		cubeSkyBox.texturePath = "assets/textures/skybox/skybox";
 
-        let glowLayer = await this.world.registerComponent(BRIX.GlowLayerComponent);
+        let glowLayer:BRIX.GlowLayerComponent = await this.world.registerComponent(BRIX.GlowLayerComponent);
         glowLayer.intensity = 1;
+        glowLayer.get().blurKernelSize = 92;
       
-
+        this.world.getScene().clearColor = BABYLON.Color3.Black();
     }
 
     private async createShip(){
@@ -102,12 +113,14 @@ export class Main{
         console.log("Player Components: " , player.components);
 
         window.addEventListener("keydown", async (ev) => {
+            //Movement for the ship
             if(ev.keyCode == 65){
                 meshComponent.move(new BABYLON.Vector3(-this.movingSpeed,0,0));
             }
             if(ev.keyCode == 68){
                 meshComponent.move(new BABYLON.Vector3(this.movingSpeed,0,0));
             }
+            //Shooting for the ship
             if(ev.keyCode == 32){
                 await laserComponent.createLaser();
                 console.log("Shooting");
@@ -136,6 +149,23 @@ export class Main{
         
     }
 
+    //Random Shapes on the background
+    private async createRandomShapes(color: BABYLON.Color3){
+        const randomShapes: BRIX.GameObject = new BRIX.GameObject("randomShapes", this.world);
+        const setShapesComponent :BRIX.SetShapesComponent = await randomShapes.registerComponent(BRIX.SetShapesComponent);
+        setShapesComponent.meshType = BRIX.MeshType.SPHERE;
+        const meshComponent: BRIX.MeshComponent = ( randomShapes.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent);
+        meshComponent.get().visibility = 1;
+        meshComponent.get().position = new BABYLON.Vector3(this.randomIntFromInterval(-300,300),-100,this.randomIntFromInterval(-300,300));
+        meshComponent.get().scaling = new BABYLON.Vector3(35,35,35);
+        // meshComponent.get().material.emissiveColor = new BABYLON.Color3(this.randomIntFromInterval(0.0,1.0),this.randomIntFromInterval(0.0,1.0),this.randomIntFromInterval(0.0,1.0));
+        let standardMaterial = new BABYLON.StandardMaterial("standardMaterial", this.world.getScene());
+        meshComponent.get().material = standardMaterial;
+        standardMaterial.emissiveColor = color;
+        standardMaterial.alpha = 0.5;
+        standardMaterial.backFaceCulling = false;
+
+    }
 
     private randomIntFromInterval(min, max) { 
         return Math.floor(Math.random() * (max - min + 1) + min)

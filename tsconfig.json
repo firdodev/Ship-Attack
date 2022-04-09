@@ -11,6 +11,12 @@
         "dom",
         "es6"
     ],
-    "rootDir": "src"
+    "rootDir": "src",
+    "types":[
+      "babylonjs",
+      "babylonjs-gui",
+      "babylonjs-loaders",
+      "babylonjs-materials"
+    ]
   }
 }

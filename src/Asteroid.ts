@@ -21,7 +21,7 @@ export class Asteroid{
         Asteroid.asteroidMesh.get().material.subMaterials[0].bumpTexture = new BABYLON.Texture("assets/Asteroid/Normal.jpg",world.getScene());
         Asteroid.asteroidMesh.get().material.subMaterials[0].emissiveTexture = new BABYLON.Texture("assets/Asteroid/Emission.jpg", world.getScene(), false, false);
         let lightManager = await asteroid.registerComponent(LightManagerComponent);
-        lightManager.color2 = new BABYLON.Color3(200,200,200);
+        lightManager.color2 = new BABYLON.Color3(500,500,500);
         
         this.addAsteroidToArrary(Asteroid.asteroidMesh);
 

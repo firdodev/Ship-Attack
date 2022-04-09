@@ -7,8 +7,12 @@ let main = new Main(view);
 
 function onReady(){
     console.log("is Ready");
+    
+    setTimeout(() => {
+        document.getElementById("loader").style.display = "none";
+    }, 10000);
 
-    document.getElementById("loader").style.display = "none";
+
     document.getElementById("view").style.display = "block";
 
     main.getWorld().getEngine().resize();
