@@ -5,12 +5,13 @@ import * as BABYLON from "@babylonjs/core"
 import * as BRIX from "@ludum_studios/brix-core"
 
 import { LightManagerComponent } from "./Components/LightManagerComponent"
-
+import { BoomComponent } from "./Components/BoomComponent"
 export class Asteroid{
 
     public static asteroidMesh: BRIX.MeshComponent;
     private asteroidSize = 30;
     public static asteroidsCreated = [];
+    public static ASTEROIDS = 0;
 
     async  createAsteroidMesh(world,position: BABYLON.Vector3){
         const asteroid:BRIX.GameObject = new BRIX.GameObject("dumpy", world);
@@ -22,11 +23,12 @@ export class Asteroid{
         Asteroid.asteroidMesh.get().material.subMaterials[0].emissiveTexture = new BABYLON.Texture("assets/Asteroid/Emission.jpg", world.getScene(), false, false);
         let lightManager = await asteroid.registerComponent(LightManagerComponent);
         lightManager.color2 = new BABYLON.Color3(500,500,500);
+
+        // await asteroid.registerComponent(BoomComponent);
         
         this.addAsteroidToArrary(Asteroid.asteroidMesh);
-
+        Asteroid.ASTEROIDS+=1;
         console.log("Asteroid Components: ", asteroid.components);
-        console.log("There are ", Asteroid.asteroidsCreated, " asteroids created.");
         // console.log("Position of Asteroid: " + this.getAsteroidPositon());
     }
 

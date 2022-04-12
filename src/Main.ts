@@ -3,6 +3,7 @@ import "@babylonjs/inspector"
 import "@babylonjs/loaders"
 import "babylonjs-loaders"
 import "@babylonjs/loaders/glTF"
+import * as GUI from "@babylonjs/gui"
 import * as BABYLON from "@babylonjs/core"
 import * as BRIX from "@ludum_studios/brix-core"
 
@@ -60,6 +61,7 @@ export class Main{
         await this.createRandomShapes(new BABYLON.Color3(50,0,0));
         await this.createRandomShapes(new BABYLON.Color3(80,30,0));
 
+
         //Saving everything in an array
         for (let i = 0; i < 1; i++) {
             await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(0,0,0));
@@ -80,9 +82,9 @@ export class Main{
         cameraController.getCamera().radius = 700;
         cameraController.getCamera().alpha = -1.57;
         cameraController.getCamera().beta = -10;
-        cameraController.getCamera().upperRadiusLimit = 700;
-        cameraController.getCamera().lowerRadiusLimit = 500;
-        cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
+        // cameraController.getCamera().upperRadiusLimit = 700;
+        // cameraController.getCamera().lowerRadiusLimit = 500;
+        // cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
 
         let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
         pipeline.hasBloom = true;
@@ -98,6 +100,10 @@ export class Main{
         glowLayer.get().blurKernelSize = 92;
       
         this.world.getScene().clearColor = BABYLON.Color3.Black();
+
+
+        // this.createGui();
+
     }
 
     private async createShip(){
@@ -122,10 +128,16 @@ export class Main{
             }
             //Shooting for the ship
             if(ev.keyCode == 32){
-                await laserComponent.createLaser();
-                console.log("Shooting");
-                this.enableToShoot = false;
-                this.test+=30;
+                if(Asteroid.ASTEROIDS > 0){
+                    await laserComponent.createLaser();
+                    console.log("Shooting");
+                    this.enableToShoot = false;
+                    this.test+=30;
+                    Asteroid.ASTEROIDS--;
+                }else{
+                    console.log("There are no more asteroids.");
+                    window.location.reload();
+                }
             }
         });
 
@@ -140,9 +152,9 @@ export class Main{
                 const meshComponent: BRIX.MeshComponent = ( grid.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent);
                 meshComponent.get().scaling = new BABYLON.Vector3(75,75,75);
                 meshComponent.get().visibility = 0;
-                meshComponent.get().position = new BABYLON.Vector3(x * 75,0,z * 75);
+                meshComponent.get().position = new BABYLON.Vector3(x * 75,0,z * 75 + this.randomIntFromInterval(-100,100));
 
-               await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(x * 75,0,z * 75));
+               await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(x * 75,0,z * 75 + this.randomIntFromInterval(-100,100)));
         
             }
         }
@@ -165,6 +177,15 @@ export class Main{
         standardMaterial.alpha = 0.5;
         standardMaterial.backFaceCulling = false;
 
+    }
+
+    createGui(){
+        let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        let asteroidAvailable = new GUI.TextBlock();
+        asteroidAvailable.text = Asteroid.ASTEROIDS.toString();
+        asteroidAvailable.color = "white";
+        asteroidAvailable.fontSize = 24;
+        advancedTexture.addControl(asteroidAvailable);
     }
 
     private randomIntFromInterval(min, max) { 

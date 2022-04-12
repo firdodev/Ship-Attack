@@ -6,6 +6,8 @@ import * as BRIX from "@ludum_studios/brix-core"
 import { Main } from "../Main"
 import { Asteroid } from "../Asteroid"
 
+import { BoomComponent } from "./BoomComponent"
+
 export class LaserComponent extends BRIX.Component {
 
     private main: Main = new Main(document.getElementById("view") as HTMLCanvasElement);
@@ -15,12 +17,13 @@ export class LaserComponent extends BRIX.Component {
 
     private bullet: BRIX.GameObject;
     private meshComponent: BRIX.MeshComponent;
-
+    
     private isCreated: Boolean = false;
-
+    
     private time = 0;
     private timeCheck = 120;
     
+    private boomcomp: BoomComponent = new BoomComponent();
 
     constructor(gameObject: BRIX.GameObject, name: String) {
         super(gameObject, name);
@@ -39,6 +42,7 @@ export class LaserComponent extends BRIX.Component {
             if(Asteroid.asteroidsCreated.length > 0){
                 if(this.meshComponent.get().intersectsMesh(this.getAsteroid(i),true)){
                     console.log("Touching Asteroid");
+                    this.boomcomp.explode((this.object as BRIX.GameObject).getWorld().getScene(), this.getAsteroid(i).position);
                     this.getAsteroid(i).dispose();
                     this.bullet.dispose();
                 }else{
