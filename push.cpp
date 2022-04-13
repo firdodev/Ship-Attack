@@ -20,4 +20,11 @@ int main(){
 	cout<<endl;
 	cout<<"Pushing the files..."<<endl;
 	system("git push");
+	
+	cout<<endl;
+	cout<<endl;
+	cout<<endl;
+	cout<<endl;
+	cout<<endl;
+	system("PAUSE");
 }
