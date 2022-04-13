@@ -13,7 +13,7 @@ int main(){
 	commition = init + commit + add;
 	cout<<init<<endl;
 	cout<<"Commiting the files..."<<endl;
-	system("git commit -m \" Fixing \" ");
+	system("git commit -m \" $commition \" ");
 	cout<<"Pushing the files..."<<endl;
 	system("git push");
 }
