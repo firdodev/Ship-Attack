@@ -5,43 +5,51 @@ import * as BABYLON from "@babylonjs/core"
 import * as BRIX from "@ludum_studios/brix-core"
 
 import { LightManagerComponent } from "./Components/LightManagerComponent"
-import { BoomComponent } from "./Components/BoomComponent"
 export class Asteroid{
 
-    public static asteroidMesh: BRIX.MeshComponent;
+    public asteroidMesh: BRIX.MeshComponent;
     private asteroidSize = 30;
-    public static asteroidsCreated = [];
-    public static ASTEROIDS = 0;
+    public static asteroidsCreatedObj = [];
+    public static asteroidsCreatedMesh = [];
+    public ASTEROIDS = 0;
+    public asteroid: BRIX.GameObject;
 
     async  createAsteroidMesh(world,position: BABYLON.Vector3){
-        const asteroid:BRIX.GameObject = new BRIX.GameObject("dumpy", world);
-        Asteroid.asteroidMesh = await asteroid.registerComponent(BRIX.MeshComponent);
-        await Asteroid.asteroidMesh.loadAsync("assets/Asteroid/","Asteroid2.glb");
-        Asteroid.asteroidMesh.get().scaling = new BABYLON.Vector3(this.asteroidSize,this.asteroidSize,this.asteroidSize);
-        Asteroid.asteroidMesh.get().position = position;
-        Asteroid.asteroidMesh.get().material.subMaterials[0].bumpTexture = new BABYLON.Texture("assets/Asteroid/Normal.jpg",world.getScene());
-        Asteroid.asteroidMesh.get().material.subMaterials[0].emissiveTexture = new BABYLON.Texture("assets/Asteroid/Emission.jpg", world.getScene(), false, false);
-        let lightManager = await asteroid.registerComponent(LightManagerComponent);
+        this.asteroid = new BRIX.GameObject("dumpy", world);
+        this.asteroidMesh = await this.asteroid.registerComponent(BRIX.MeshComponent);
+        await this.asteroidMesh.loadAsync("assets/Asteroid/","Asteroid2.glb");
+        this.asteroidMesh.get().scaling = new BABYLON.Vector3(this.asteroidSize,this.asteroidSize,this.asteroidSize);
+        this.asteroidMesh.get().position = position;
+        this.asteroidMesh.get().material.subMaterials[0].bumpTexture = new BABYLON.Texture("assets/Asteroid/Normal.jpg",world.getScene());
+        this.asteroidMesh.get().material.subMaterials[0].emissiveTexture = new BABYLON.Texture("assets/Asteroid/Emission.jpg", world.getScene(), false, false);
+        let lightManager = await this.asteroid.registerComponent(LightManagerComponent);
         lightManager.color2 = new BABYLON.Color3(500,500,500);
 
-        // await asteroid.registerComponent(BoomComponent);
         
-        this.addAsteroidToArrary(Asteroid.asteroidMesh);
-        Asteroid.ASTEROIDS+=1;
-        console.log("Asteroid Components: ", asteroid.components);
+        Asteroid.addAsteroidToArraryObj(this.asteroid);
+        Asteroid.addAsteroidToArraryMesh(this.asteroidMesh);
+        this.ASTEROIDS+=1;
+        console.log("Asteroid Components: ", this.asteroid.components);
         // console.log("Position of Asteroid: " + this.getAsteroidPositon());
     }
 
     public getAsteroidPositon(): BABYLON.Vector3{
-        return Asteroid.asteroidMesh.get().position;
+        return this.asteroidMesh.get().position;
     }
 
-    public addAsteroidToArrary(asteroid: BRIX.MeshComponent){
-        Asteroid.asteroidsCreated.push(asteroid);
+    public static addAsteroidToArraryObj(asteroid: BRIX.GameObject){
+        this.asteroidsCreatedObj.push(asteroid);
     }
-
+    public static addAsteroidToArraryMesh(asteroid: BRIX.MeshComponent){
+        this.asteroidsCreatedMesh.push(asteroid);
+    }
     public getAsteroidMesh(): BRIX.MeshComponent{
-        return Asteroid.asteroidMesh;
+        return this.asteroidMesh;
+    }
+
+    //Destroy asteroid object
+    public disposeA(index){
+        Asteroid.asteroidsCreatedObj[index].dispose();
     }
 
     

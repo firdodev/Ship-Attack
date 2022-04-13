@@ -6,7 +6,7 @@ import * as BRIX from "@ludum_studios/brix-core"
 import { Main } from "../Main"
 import { Asteroid } from "../Asteroid"
 
-import { BoomComponent } from "./BoomComponent"
+import { ParticleComponent } from "./ParticleComponent"
 
 export class LaserComponent extends BRIX.Component {
 
@@ -23,7 +23,7 @@ export class LaserComponent extends BRIX.Component {
     private time = 0;
     private timeCheck = 120;
     
-    private boomcomp: BoomComponent = new BoomComponent();
+    private boomcomp: ParticleComponent = new ParticleComponent();
 
     constructor(gameObject: BRIX.GameObject, name: String) {
         super(gameObject, name);
@@ -38,15 +38,18 @@ export class LaserComponent extends BRIX.Component {
     }
     
     async checkAsteroidTouching(){
-       for(let i = 0; i < Asteroid.asteroidsCreated.length; i++){
-            if(Asteroid.asteroidsCreated.length > 0){
-                if(this.meshComponent.get().intersectsMesh(this.getAsteroid(i),true)){
+
+       for(let i = 0; i < Asteroid.asteroidsCreatedObj.length; i++){
+        //    console.log("Asteroid Mesh ====> ", this.getAsteroidMesh(i));
+        //    console.log("Astroid ====> ", this.getAsteroid(i));
+            if(Asteroid.asteroidsCreatedObj.length > 0){
+                if(this.meshComponent.get().intersectsMesh(this.getAsteroidMesh(i),false)){
+                    console.log(this.getAsteroidMesh(i));
                     console.log("Touching Asteroid");
-                    this.boomcomp.explode((this.object as BRIX.GameObject).getWorld().getScene(), this.getAsteroid(i).position);
-                    this.getAsteroid(i).dispose();
+                    this.boomcomp.explode((this.object as BRIX.GameObject).getWorld().getScene(), this.getAsteroidMesh(i).position);
+                    this.asteroid.disposeA(i);
                     this.bullet.dispose();
-                }else{
-                    // console.log("Not touching asteroid");
+                    // this.isCreated = false;
                 }
             }else{
                 console.log("No asteroids");
@@ -54,11 +57,16 @@ export class LaserComponent extends BRIX.Component {
         }
     }
 
-    private getAsteroid(index){
+    private getAsteroidMesh(index){
         
-        return Asteroid.asteroidsCreated[index].get();
+        return Asteroid.asteroidsCreatedMesh[index].get();
         
     }
+
+    private getAsteroid(index){
+        return Asteroid.asteroidsCreatedObj[index];
+    }
+
     async createLaser(){
         if(!this.isCreated){
             this.bullet = new BRIX.GameObject("bullet", (this.object as BRIX.GameObject).getWorld());
@@ -67,7 +75,6 @@ export class LaserComponent extends BRIX.Component {
             this.meshComponent.get().scaling = new BABYLON.Vector3(10,10,10);
             this.meshComponent.get().position = new BABYLON.Vector3(this.shipPosition.x,0,this.shipPosition.z);
             this.meshComponent.get().material.subMaterials[0].emissiveColor = new BABYLON.Color3(50, 0, 0);
-            console.log("material", this.meshComponent.get().material);
 
             this.isCreated = true;
 
@@ -77,7 +84,7 @@ export class LaserComponent extends BRIX.Component {
     updateBeforeRender = () => {
         if(this.isCreated){
             // console.log(this.getAsteroid());
-            this.meshComponent.move(new BABYLON.Vector3(0,0,2));
+            this.meshComponent.move(new BABYLON.Vector3(0,0,4));
             this.shipPosition.z = this.meshComponent.get().position.z;
             this.checkAsteroidTouching();
             if(this.time >= this.timeCheck){              

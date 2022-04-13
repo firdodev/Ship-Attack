@@ -1,7 +1,7 @@
 import * as BRIX from "@ludum_studios/brix-core"
 
 
-export class BoomComponent {
+export class ParticleComponent {
 
 
   public explode(scene,position: BABYLON.Vector3){

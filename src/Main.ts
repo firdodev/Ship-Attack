@@ -9,6 +9,8 @@ import * as BRIX from "@ludum_studios/brix-core"
 
 import { LaserComponent } from "./Components/LaserComponent"
 import { Asteroid } from "./Asteroid"
+import { ParticleComponent } from "./Components/ParticleComponent"
+import { RocketComponent } from "./Components/RocketComponent"
 
 export class Main{
 
@@ -52,22 +54,19 @@ export class Main{
     public async setup(onReady: Function) {
         await this.setWorld(null);
         await this.createShip();
-        await this.createRandomShapes(new BABYLON.Color3(0,30,80));
-        await this.createRandomShapes(new BABYLON.Color3(30,0,80));
-        await this.createRandomShapes(new BABYLON.Color3(50,0,0));
-        await this.createRandomShapes(new BABYLON.Color3(30,80,0));
-        await this.createRandomShapes(new BABYLON.Color3(0,30,0));
-        await this.createRandomShapes(new BABYLON.Color3(30,0,80));
-        await this.createRandomShapes(new BABYLON.Color3(50,0,0));
-        await this.createRandomShapes(new BABYLON.Color3(80,30,0));
+        // await this.createRandomShapes(new BABYLON.Color3(0,30,80));
+        // await this.createRandomShapes(new BABYLON.Color3(30,0,80));
+        // await this.createRandomShapes(new BABYLON.Color3(50,0,0));
+        // await this.createRandomShapes(new BABYLON.Color3(30,80,0));
+        // await this.createRandomShapes(new BABYLON.Color3(0,30,0));
+        // await this.createRandomShapes(new BABYLON.Color3(30,0,80));
+        // await this.createRandomShapes(new BABYLON.Color3(50,0,0));
+        // await this.createRandomShapes(new BABYLON.Color3(80,30,0));
 
 
         //Saving everything in an array
-        for (let i = 0; i < 1; i++) {
-            await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(0,0,0));
-        }
 
-        await this.createGrid(1,3); // Create a grid where asteroid can be stored
+        await this.createGrid(2,2); // Create a grid where asteroid can be stored
         this.onReady = onReady;
     
         this.world.start();
@@ -86,9 +85,9 @@ export class Main{
         // cameraController.getCamera().lowerRadiusLimit = 500;
         // cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
 
-        let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
-        pipeline.hasBloom = true;
-        pipeline.bloomWeight = 0.5;
+        // let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
+        // pipeline.hasBloom = true;
+        // pipeline.bloomWeight = 0.5;
 
         const lightComponent: BRIX.LightComponent = await this.world.registerComponent(BRIX.HemisphericLightComponent);
         lightComponent.intensity = 0.3;
@@ -115,6 +114,9 @@ export class Main{
 
         meshComponent.get().material.subMaterials[0].emissiveColor = new BABYLON.Color3(5,5,5);
 
+        let rocket1: RocketComponent = await player.registerComponent(RocketComponent);
+        await rocket1.createRocketFireParticle(player,this.world,meshComponent.position);
+
         const laserComponent = await player.registerComponent(LaserComponent);
         console.log("Player Components: " , player.components);
 
@@ -128,12 +130,12 @@ export class Main{
             }
             //Shooting for the ship
             if(ev.keyCode == 32){
-                if(Asteroid.ASTEROIDS > 0){
+                if(this.asteroid.ASTEROIDS > 0){
                     await laserComponent.createLaser();
                     console.log("Shooting");
                     this.enableToShoot = false;
                     this.test+=30;
-                    Asteroid.ASTEROIDS--;
+                    this.asteroid.ASTEROIDS--;
                 }else{
                     console.log("There are no more asteroids.");
                     window.location.reload();
@@ -144,7 +146,7 @@ export class Main{
     }
 
     async createGrid(rows: number, cols: number){
-        for (let x = -5; x < cols; x++) {
+        for (let x = 0; x < cols; x++) {
             for(let z = 0; z < rows; z++){
                 const grid: BRIX.GameObject = new BRIX.GameObject("grid", this.world);
                 const setShapesComponent :BRIX.SetShapesComponent = await grid.registerComponent(BRIX.SetShapesComponent);
@@ -152,9 +154,10 @@ export class Main{
                 const meshComponent: BRIX.MeshComponent = ( grid.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent);
                 meshComponent.get().scaling = new BABYLON.Vector3(75,75,75);
                 meshComponent.get().visibility = 0;
-                meshComponent.get().position = new BABYLON.Vector3(x * 75,0,z * 75 + this.randomIntFromInterval(-100,100));
+                meshComponent.get().position = new BABYLON.Vector3(x * 75,0,z * 75);
 
-               await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(x * 75,0,z * 75 + this.randomIntFromInterval(-100,100)));
+               await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(x * 75,0,z * 75));
+                // this.asteroid.asteroidMesh.get().clone("Asteroid"+"z");
         
             }
         }
@@ -165,7 +168,7 @@ export class Main{
     private async createRandomShapes(color: BABYLON.Color3){
         const randomShapes: BRIX.GameObject = new BRIX.GameObject("randomShapes", this.world);
         const setShapesComponent :BRIX.SetShapesComponent = await randomShapes.registerComponent(BRIX.SetShapesComponent);
-        setShapesComponent.meshType = BRIX.MeshType.SPHERE;
+        setShapesComponent.meshType = BRIX.MeshType.BOX;
         const meshComponent: BRIX.MeshComponent = ( randomShapes.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent);
         meshComponent.get().visibility = 1;
         meshComponent.get().position = new BABYLON.Vector3(this.randomIntFromInterval(-300,300),-100,this.randomIntFromInterval(-300,300));
@@ -179,14 +182,14 @@ export class Main{
 
     }
 
-    createGui(){
-        let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        let asteroidAvailable = new GUI.TextBlock();
-        asteroidAvailable.text = Asteroid.ASTEROIDS.toString();
-        asteroidAvailable.color = "white";
-        asteroidAvailable.fontSize = 24;
-        advancedTexture.addControl(asteroidAvailable);
-    }
+    // createGui(){
+    //     let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    //     let asteroidAvailable = new GUI.TextBlock();
+    //     asteroidAvailable.text = Asteroid.ASTEROIDS.toString();
+    //     asteroidAvailable.color = "white";
+    //     asteroidAvailable.fontSize = 24;
+    //     advancedTexture.addControl(asteroidAvailable);
+    // }
 
     private randomIntFromInterval(min, max) { 
         return Math.floor(Math.random() * (max - min + 1) + min)
