@@ -16,7 +16,7 @@ export class Main{
 
     // private laserComp: LaserComponent;
 
-    private asteroid: Asteroid = new Asteroid();
+    // private asteroid: Asteroid = new Asteroid();
 
     private enableToShoot: Boolean = false;
     private world;
@@ -27,7 +27,8 @@ export class Main{
     private test = 0;
 
     private movingSpeed = 10;
-    public asteroidArray;
+    public asteroidArray = [];
+    public asteroidArrayMesh = [];
 
     constructor(view) {
         this.view = view;
@@ -62,6 +63,14 @@ export class Main{
         // await this.createRandomShapes(new BABYLON.Color3(30,0,80));
         // await this.createRandomShapes(new BABYLON.Color3(50,0,0));
         // await this.createRandomShapes(new BABYLON.Color3(80,30,0));
+
+
+
+        // await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(1 * 75,0,1 * 75), 1);
+        // await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(2 * 75,0,2 * 75), 2);
+        // await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(3 * 75,0,3 * 75), 3);
+        // await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(4 * 75,0,4 * 75), 4);
+
 
 
         //Saving everything in an array
@@ -118,8 +127,8 @@ export class Main{
 
         meshComponent.get().material.subMaterials[0].emissiveColor = new BABYLON.Color3(5,5,5);
 
-        let rocket1: RocketComponent = await player.registerComponent(RocketComponent);
-        await rocket1.createRocketFireParticle(player,this.world,meshComponent.position);
+        // let rocket1: RocketComponent = await player.registerComponent(RocketComponent);
+        // await rocket1.createRocketFireParticle(player,this.world,meshComponent.position);
 
         const laserComponent = await player.registerComponent(LaserComponent);
         console.log("Player Components: " , player.components);
@@ -134,20 +143,22 @@ export class Main{
             }
             //Shooting for the ship
             if(ev.keyCode == 32){
-                if(this.asteroid.ASTEROIDS > 0){
+                // if(this.asteroid.ASTEROIDS > 0){
                     await laserComponent.createLaser();
                     console.log("Shooting");
                     this.enableToShoot = false;
                     this.test+=30;
                     // this.asteroid.ASTEROIDS--;
-                }else{
-                    console.log("There are no more asteroids.");
-                    window.location.reload();
-                }
+                // }else{
+                //     console.log("There are no more asteroids.");
+                //     window.location.reload();
+                // }
             }
-        });
-
+        })
     }
+
+    private index = 0;
+
 
     async createGrid(rows: number, cols: number){
         for (let x = 0; x < cols; x++) {
@@ -160,7 +171,17 @@ export class Main{
                 meshComponent.get().visibility = 0;
                 meshComponent.get().position = new BABYLON.Vector3(x * 75,0,z * 75);
 
-               await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(x * 75,0,z * 75), x);
+                const asteroid: Asteroid = await grid.registerComponent(Asteroid);
+                await asteroid.createAsteroidMesh(this.world,new BABYLON.Vector3(x * 75,0,z * 75),this.index);
+                this.index++;
+
+                this.asteroidArray.push(asteroid.asteroid);
+                this.asteroidArrayMesh.push(asteroid.asteroidMesh);
+
+                console.log("ASteroid Obj Array ====> ",this.asteroidArray);
+                console.log("Asteroid Mesh Array ====> " , this.asteroidArrayMesh);
+
+                // await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(x * 75,0,z * 75), x);
                 // this.asteroid.asteroidMesh.get().clone("Asteroid"+"z");
         
             }

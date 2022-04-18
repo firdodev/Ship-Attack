@@ -4,14 +4,14 @@ import "@babylonjs/loaders/glTF"
 import * as BABYLON from "@babylonjs/core"
 import * as BRIX from "@ludum_studios/brix-core"
 import { Main } from "../Main"
-import { Asteroid } from "../Asteroid"
 
+import { Asteroid } from "../Asteroid"
 import { ParticleComponent } from "./ParticleComponent"
 
 export class LaserComponent extends BRIX.Component {
 
     private main: Main = new Main(document.getElementById("view") as HTMLCanvasElement);
-    private asteroid: Asteroid = new Asteroid();
+    // private asteroid: Asteroid = new Asteroid();
 
     private shipPosition:BABYLON.Vector3 = new BABYLON.Vector3(0,0,-150);
 
@@ -38,17 +38,17 @@ export class LaserComponent extends BRIX.Component {
     }
     
     async checkAsteroidTouching(){
-
+        console.log(this.getAsteroidMesh(1));
        for(let i = 0; i < Asteroid.asteroidsCreatedObj.length; i++){
         //    console.log("Asteroid Mesh ====> ", this.getAsteroidMesh(i));
         //    console.log("Astroid ====> ", this.getAsteroid(i));
-            if(Asteroid.asteroidsCreatedObj.length > 0){
-                if(this.meshComponent.get().intersectsMesh(this.getAsteroidMesh(i),false)){
-                    console.log(this.getAsteroidMesh(i));
+            if(this.main.asteroidArray.length > 0){
+                if(this.meshComponent.get().intersectsMesh(this.getAsteroidMesh(i),true)){
+                    console.log(this.getAsteroid(i));
                     // console.log("Touching Asteroid");
                     this.boomcomp.explode((this.object as BRIX.GameObject).getWorld().getScene(), this.getAsteroidMesh(i).position);
                     // this.asteroid.disposeA(i);
-                    this.getAsteroidMesh(i).dispose();
+                    this.getAsteroid(i).dispose();
                     this.bullet.dispose();
                     this.isCreated = false;
                     this.shipPosition.z = -150; 
@@ -61,12 +61,12 @@ export class LaserComponent extends BRIX.Component {
 
     private getAsteroidMesh(index){
         
-        return Asteroid.asteroidsCreatedMesh[index].get();
+        return this.main.asteroidArrayMesh[index].get();
         
     }
 
     private getAsteroid(index){
-        return Asteroid.asteroidsCreatedObj[index];
+        return this.main.asteroidArray[index];
     }
 
     async createLaser(){
