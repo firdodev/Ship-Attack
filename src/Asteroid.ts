@@ -19,7 +19,7 @@ export class Asteroid extends BRIX.Component{
         super(gameobject,name);
     }
 
-    async  createAsteroidMesh(world,position: BABYLON.Vector3, index){
+    async  createAsteroidMesh(world,position: BABYLON.Vector3,index){
         this.asteroid = new BRIX.GameObject("dumpy", world);
         this.asteroid.name = "asteroid" + index;
         this.asteroidMesh = await this.asteroid.registerComponent(BRIX.MeshComponent);

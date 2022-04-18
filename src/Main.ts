@@ -157,7 +157,7 @@ export class Main{
         })
     }
 
-    private index = 0;
+    public static index = 0;
 
 
     async createGrid(rows: number, cols: number){
@@ -172,18 +172,8 @@ export class Main{
                 meshComponent.get().position = new BABYLON.Vector3(x * 75,0,z * 75);
 
                 const asteroid: Asteroid = await grid.registerComponent(Asteroid);
-                await asteroid.createAsteroidMesh(this.world,new BABYLON.Vector3(x * 75,0,z * 75),this.index);
-                this.index++;
-
-                this.asteroidArray.push(asteroid.asteroid);
-                this.asteroidArrayMesh.push(asteroid.asteroidMesh);
-
-                console.log("ASteroid Obj Array ====> ",this.asteroidArray);
-                console.log("Asteroid Mesh Array ====> " , this.asteroidArrayMesh);
-
-                // await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(x * 75,0,z * 75), x);
-                // this.asteroid.asteroidMesh.get().clone("Asteroid"+"z");
-        
+                await asteroid.createAsteroidMesh(this.world,new BABYLON.Vector3(x * 75,0,z * 75),Main.index);
+                Main.index++;
             }
         }
         
