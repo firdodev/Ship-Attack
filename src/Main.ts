@@ -71,6 +71,10 @@ export class Main{
     
         this.world.start();
         this.started = true;
+
+        // this.getWorld().getScene().debugLayer.show({
+        //     embedMode: true,
+        // });
     }
 
     private async setWorld(onReady: Function){
@@ -135,7 +139,7 @@ export class Main{
                     console.log("Shooting");
                     this.enableToShoot = false;
                     this.test+=30;
-                    this.asteroid.ASTEROIDS--;
+                    // this.asteroid.ASTEROIDS--;
                 }else{
                     console.log("There are no more asteroids.");
                     window.location.reload();
@@ -156,7 +160,7 @@ export class Main{
                 meshComponent.get().visibility = 0;
                 meshComponent.get().position = new BABYLON.Vector3(x * 75,0,z * 75);
 
-               await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(x * 75,0,z * 75));
+               await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(x * 75,0,z * 75), x);
                 // this.asteroid.asteroidMesh.get().clone("Asteroid"+"z");
         
             }
@@ -182,14 +186,18 @@ export class Main{
 
     }
 
-    // createGui(){
-    //     let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-    //     let asteroidAvailable = new GUI.TextBlock();
-    //     asteroidAvailable.text = Asteroid.ASTEROIDS.toString();
-    //     asteroidAvailable.color = "white";
-    //     asteroidAvailable.fontSize = 24;
-    //     advancedTexture.addControl(asteroidAvailable);
-    // }
+    createGui(){
+        let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        let xmlLoader = new GUI.XmlLoader();
+        xmlLoader.loadLayout("assets/UI/UI.xml", advancedTexture, (layout) => {});
+        // let xmlLoader = 
+        
+        // let asteroidAvailable = new GUI.TextBlock();
+        // asteroidAvailable.text = ;
+        // asteroidAvailable.color = "white";
+        // asteroidAvailable.fontSize = 24;
+        // advancedTexture.addControl(asteroidAvailable);
+    }
 
     private randomIntFromInterval(min, max) { 
         return Math.floor(Math.random() * (max - min + 1) + min)

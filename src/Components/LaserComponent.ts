@@ -45,11 +45,13 @@ export class LaserComponent extends BRIX.Component {
             if(Asteroid.asteroidsCreatedObj.length > 0){
                 if(this.meshComponent.get().intersectsMesh(this.getAsteroidMesh(i),false)){
                     console.log(this.getAsteroidMesh(i));
-                    console.log("Touching Asteroid");
+                    // console.log("Touching Asteroid");
                     this.boomcomp.explode((this.object as BRIX.GameObject).getWorld().getScene(), this.getAsteroidMesh(i).position);
-                    this.asteroid.disposeA(i);
+                    // this.asteroid.disposeA(i);
+                    this.getAsteroidMesh(i).dispose();
                     this.bullet.dispose();
-                    // this.isCreated = false;
+                    this.isCreated = false;
+                    this.shipPosition.z = -150; 
                 }
             }else{
                 console.log("No asteroids");
