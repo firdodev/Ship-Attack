@@ -11,7 +11,6 @@ import { LaserComponent } from "./Components/LaserComponent"
 import { Asteroid } from "./Asteroid"
 import { ParticleComponent } from "./Components/ParticleComponent"
 import { RocketComponent } from "./Components/RocketComponent"
-import { GameUI } from "./gameUI"
 
 export class Main{
 
@@ -30,6 +29,15 @@ export class Main{
     private movingSpeed = 10;
     public asteroidArray = [];
     public asteroidArrayMesh = [];
+
+
+    //UI
+
+    private advancedTexture;
+
+
+    private text1;
+    private text2;
 
     constructor(view) {
         this.view = view;
@@ -57,8 +65,7 @@ export class Main{
         await this.setWorld(null);
         await this.createShip();
         let guiCon: BRIX.GUIContainerComponent = await this.world.registerComponent(BRIX.GUIContainerComponent);
-        let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI", true, this.world.getScene());
-        
+        this.advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI",true, this.world.getScene())
         
         // await this.createRandomShapes(new BABYLON.Color3(0,30,80));
         // await this.createRandomShapes(new BABYLON.Color3(30,0,80));
@@ -69,22 +76,9 @@ export class Main{
         // await this.createRandomShapes(new BABYLON.Color3(50,0,0));
         // await this.createRandomShapes(new BABYLON.Color3(80,30,0));
 
-
-
-        // await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(1 * 75,0,1 * 75), 1);
-        // await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(2 * 75,0,2 * 75), 2);
-        // await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(3 * 75,0,3 * 75), 3);
-        // await this.asteroid.createAsteroidMesh(this.world, new BABYLON.Vector3(4 * 75,0,4 * 75), 4);
-
-
-
-        //Saving everything in an array
-
         await this.createGrid(2,5); // Create a grid where asteroid can be stored
         
-        let gameUi: GameUI = this.world.registerComponent(GameUI);
-        gameUi.createUI(advancedTexture);
-
+        this.createAsteroidNumberUI(this.advancedTexture);
 
         this.onReady = onReady;
     
@@ -102,9 +96,9 @@ export class Main{
         cameraController.getCamera().radius = 700;
         cameraController.getCamera().alpha = -1.57;
         cameraController.getCamera().beta = -10;
-        // cameraController.getCamera().upperRadiusLimit = 700;
-        // cameraController.getCamera().lowerRadiusLimit = 500;
-        // cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
+        cameraController.getCamera().upperRadiusLimit = 700;
+        cameraController.getCamera().lowerRadiusLimit = 500;
+        cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
 
         let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
         pipeline.hasBloom = true;
@@ -151,18 +145,18 @@ export class Main{
             if(ev.keyCode == 68){
                 meshComponent.move(new BABYLON.Vector3(this.movingSpeed,0,0));
             }
-            //Shooting for the ship
+            //Shooting from ship
             if(ev.keyCode == 32){
-                // if(this.asteroid.ASTEROIDS > 0){
+                if(Main.arrayOfNames.length > 0){
                     await laserComponent.createLaser();
-                    // console.log("Shooting");
                     this.enableToShoot = false;
-                    this.test+=30;
-                    // this.asteroid.ASTEROIDS--;
-                // }else{
-                //     console.log("There are no more asteroids.");
-                //     window.location.reload();
-                // }
+                    setTimeout(() => {
+                        this.text1.text = Main.arrayOfNames.length.toString();
+                    }, 1000);
+                }else{
+                    console.log("There are no more asteroids.");
+                    this.createEndScreenGui(this.advancedTexture);
+                }
             }
         })
     }
@@ -209,19 +203,54 @@ export class Main{
 
     }
 
-    createGui(){
-        let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        // let xmlLoader = new GUI.XmlLoader();
-        // xmlLoader.loadLayout("assets/UI/UI.xml", advancedTexture, (layout) => {});
-        
-        let xmlLoader: BRIX.XmlGUIComponent = this.world.registerComponent(BRIX.XmlGUIComponent);
-        xmlLoader.attachToAdvanceTexture = true;
-        xmlLoader.get().loadLayout("assets/UI/UI.xml", advancedTexture);
-        // let asteroidAvailable = new GUI.TextBlock();
-        // asteroidAvailable.text = ;
-        // asteroidAvailable.color = "white";
-        // asteroidAvailable.fontSize = 24;
-        // advancedTexture.addControl(asteroidAvailable);
+    createAsteroidNumberUI(advancedTexture){
+        //Text that displays every asteroid created on the top left corner
+        this.text1 = new GUI.TextBlock();
+        this.text1.text = Main.arrayOfNames.length.toString();
+        this.text1.color = "white";
+        this.text1.fontSize = 30;
+        this.text1.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        this.text1.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        this.text1.top = "10px";
+        this.text1.left = "10px";
+        advancedTexture.addControl(this.text1);
+    }
+    
+    createEndScreenGui(advancedTexture){
+        //Text that displays when the game is over
+        //Create a black background
+        let blackBackground = new GUI.Rectangle();
+        blackBackground.thickness = 0;
+        blackBackground.background = "black";
+        blackBackground.width = "100%";
+        blackBackground.height = "100%";
+        blackBackground.alpha = 0.5;
+        blackBackground.isVisible = true;
+        advancedTexture.addControl(blackBackground);
+
+        //Retry button that refresh dhe page on click
+        var button1 = GUI.Button.CreateSimpleButton("but1", "Click Me");
+        button1.width = "150px"
+        button1.height = "40px";
+        button1.color = "white";
+        button1.cornerRadius = 20;
+        button1.background = "green";
+        button1.onPointerUpObservable.add(function() {
+            alert("you did it!");
+        });
+        button1.top = "7%";
+        advancedTexture.addControl(button1);
+
+        //Create a text that says "Game Over" in the center
+        let gameOverText = new GUI.TextBlock();
+        gameOverText.text = "Game Over";
+        gameOverText.color = "white";
+        gameOverText.fontSize = 50;
+        gameOverText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
+        gameOverText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        // gameOverText.top = "50%";
+        // gameOverText.left = "50%";
+        advancedTexture.addControl(gameOverText);
     }
 
     private randomIntFromInterval(min, max) { 

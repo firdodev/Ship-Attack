@@ -85,7 +85,7 @@ export class LaserComponent extends BRIX.Component {
     
     updateBeforeRender = () => {
         if(this.isCreated){
-            this.meshComponent.move(new BABYLON.Vector3(0,0,4));
+            this.meshComponent.move(new BABYLON.Vector3(0,0,8));
             this.shipPosition.z = this.meshComponent.get().position.z;
             this.checkAsteroidTouching();
             if(this.time >= this.timeCheck){              
