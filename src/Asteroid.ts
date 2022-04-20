@@ -21,9 +21,9 @@ export class Asteroid extends BRIX.Component{
 
     async  createAsteroidMesh(world,position: BABYLON.Vector3,index){
         this.asteroid = new BRIX.GameObject("dumpy", world);
-        this.asteroid.name = "asteroid" + index;
+        this.asteroid.name = "asteroid"+index;
         this.asteroidMesh = await this.asteroid.registerComponent(BRIX.MeshComponent);
-        this.asteroidMesh.name = "asteroid" + index;
+        this.asteroidMesh.name = "asteroid"+index;
         await this.asteroidMesh.loadAsync("assets/Asteroid/","Asteroid2.glb");
         this.asteroidMesh.get().scaling = new BABYLON.Vector3(this.asteroidSize,this.asteroidSize,this.asteroidSize);
         this.asteroidMesh.get().position = position;
@@ -36,7 +36,7 @@ export class Asteroid extends BRIX.Component{
         // Asteroid.addAsteroidToArraryObj(this.asteroid);
         // Asteroid.addAsteroidToArraryMesh(this.asteroidMesh);
         this.ASTEROIDS+=1;
-        console.log("Asteroid Components: ", this.asteroid.components);
+        // console.log("Asteroid Components: ", this.asteroid.components);
         // console.log("Position of Asteroid: " + this.getAsteroidPositon());
     }
 

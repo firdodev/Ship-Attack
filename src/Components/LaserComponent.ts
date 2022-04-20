@@ -40,45 +40,32 @@ export class LaserComponent extends BRIX.Component {
 
     
     async checkAsteroidTouching(){
+        // console.log(Main.arrayOfNames); //Shows every name in array
         if(Main.index > 0){
-            if(this.meshComponent.get().intersectsMesh(this.getAsteroidMesh(),true)){
-                console.log(this.getAsteroid());
-                this.boomcomp.explode((this.object as BRIX.GameObject).getWorld().getScene(), this.getAsteroidMesh().position);
-                this.getAsteroid().dispose();
-                this.bullet.dispose();
-                this.isCreated = false;
-                this.shipPosition.z = -150;
-                Main.index-=1;
+            for(let i = 0; i < Main.arrayOfNames.length; i++){
+                if(this.meshComponent.get().intersectsMesh(this.getAsteroidMesh(Main.arrayOfNames[i]))){
+                    // console.log(this.getAsteroid(Main.arrayOfNames[i]));
+                    this.boomcomp.explode((this.object as BRIX.GameObject).getWorld().getScene(), this.getAsteroidMesh(Main.arrayOfNames[i]).position);
+                    this.getAsteroid(Main.arrayOfNames[i]).dispose();
+                    this.bullet.dispose();
+                    this.isCreated = false;
+                    this.shipPosition.z = -150;
+                    Main.arrayOfNames.splice(i,1);
+                }else{
+                    // console.log("No Collision or Asteroid is out of range");
+                }
             }
         }else{
-            console.log("No asteroids");
+            // console.log("No asteroids");
         }
      }
 
-    // async checkAsteroidTouching(){
-    //    for(let i = 0; i < Main.index; i++){
-    //        console.log("Index per Asteroid ",i);
-    //         if(Main.index > 0){
-    //             if(this.meshComponent.get().intersectsMesh(this.getAsteroidMesh(i),true)){
-    //                 console.log(this.getAsteroid(i));
-    //                 this.boomcomp.explode((this.object as BRIX.GameObject).getWorld().getScene(), this.getAsteroidMesh(i).position);
-    //                 this.getAsteroid(i).dispose();
-    //                 this.bullet.dispose();
-    //                 this.isCreated = false;
-    //                 this.shipPosition.z = -150; 
-    //             }
-    //         }else{
-    //             console.log("No asteroids");
-    //         }
-    //     }
-    // }
-
-    private getAsteroidMesh(){
-        return ((this.object as BRIX.GameObject).getWorld().getObjectByName("asteroid1").getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent).get();
+    private getAsteroidMesh(index){
+        return ((this.object as BRIX.GameObject).getWorld().getObjectByName(index).getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent).get();
     }
 
-    private getAsteroid(){
-        return (this.object as BRIX.GameObject).getWorld().getObjectByName("asteroid1");
+    private getAsteroid(index){
+        return (this.object as BRIX.GameObject).getWorld().getObjectByName(index);
     }
 
     async createLaser(){

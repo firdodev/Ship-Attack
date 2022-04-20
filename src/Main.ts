@@ -55,6 +55,10 @@ export class Main{
     public async setup(onReady: Function) {
         await this.setWorld(null);
         await this.createShip();
+        let guiCon: BRIX.GUIContainerComponent = await this.world.registerComponent(BRIX.GUIContainerComponent);
+        let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI", true, this.world.getScene());
+        
+        
         // await this.createRandomShapes(new BABYLON.Color3(0,30,80));
         // await this.createRandomShapes(new BABYLON.Color3(30,0,80));
         // await this.createRandomShapes(new BABYLON.Color3(50,0,0));
@@ -75,15 +79,26 @@ export class Main{
 
         //Saving everything in an array
 
-        await this.createGrid(2,2); // Create a grid where asteroid can be stored
+        await this.createGrid(2,5); // Create a grid where asteroid can be stored
+        
+        var asteroidNumb: GUI.TextBlock = new GUI.TextBlock("AsteroidNum","Asteroid Number: " + Main.arrayOfNames.length);
+        asteroidNumb.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        asteroidNumb.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        asteroidNumb.color = "white";
+        asteroidNumb.fontSize = 20;
+        asteroidNumb.height = "30px";
+        asteroidNumb.width = "200px";
+        asteroidNumb.top = "10px";
+        asteroidNumb.left = "10px";
+        advancedTexture.addControl(asteroidNumb); 
+
+
         this.onReady = onReady;
     
         this.world.start();
         this.started = true;
 
-        // this.getWorld().getScene().debugLayer.show({
-        //     embedMode: true,
-        // });
+        
     }
 
     private async setWorld(onReady: Function){
@@ -98,9 +113,9 @@ export class Main{
         // cameraController.getCamera().lowerRadiusLimit = 500;
         // cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
 
-        // let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
-        // pipeline.hasBloom = true;
-        // pipeline.bloomWeight = 0.5;
+        let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
+        pipeline.hasBloom = true;
+        pipeline.bloomWeight = 0.5;
 
         const lightComponent: BRIX.LightComponent = await this.world.registerComponent(BRIX.HemisphericLightComponent);
         lightComponent.intensity = 0.3;
@@ -113,8 +128,10 @@ export class Main{
       
         this.world.getScene().clearColor = BABYLON.Color3.Black();
 
-
+        // this.world.getScene().debugLayer.show();
+        // console.log(this.getWorld().getScene())
         // this.createGui();
+
 
     }
 
@@ -131,7 +148,7 @@ export class Main{
         // await rocket1.createRocketFireParticle(player,this.world,meshComponent.position);
 
         const laserComponent = await player.registerComponent(LaserComponent);
-        console.log("Player Components: " , player.components);
+        // console.log("Player Components: " , player.components);
 
         window.addEventListener("keydown", async (ev) => {
             //Movement for the ship
@@ -145,7 +162,7 @@ export class Main{
             if(ev.keyCode == 32){
                 // if(this.asteroid.ASTEROIDS > 0){
                     await laserComponent.createLaser();
-                    console.log("Shooting");
+                    // console.log("Shooting");
                     this.enableToShoot = false;
                     this.test+=30;
                     // this.asteroid.ASTEROIDS--;
@@ -158,10 +175,10 @@ export class Main{
     }
 
     public static index = 0;
-
+    public static arrayOfNames = [];
 
     async createGrid(rows: number, cols: number){
-        for (let x = 0; x < cols; x++) {
+        for (let x = -5; x < cols; x++) {
             for(let z = 0; z < rows; z++){
                 const grid: BRIX.GameObject = new BRIX.GameObject("grid", this.world);
                 const setShapesComponent :BRIX.SetShapesComponent = await grid.registerComponent(BRIX.SetShapesComponent);
@@ -173,7 +190,9 @@ export class Main{
 
                 const asteroid: Asteroid = await grid.registerComponent(Asteroid);
                 await asteroid.createAsteroidMesh(this.world,new BABYLON.Vector3(x * 75,0,z * 75),Main.index);
+                Main.arrayOfNames.push(asteroid.getAsteroidObj().name);
                 Main.index++;
+                // console.log(this.arrayOfNames); //Outputs the names of every asteroid
             }
         }
         
@@ -199,10 +218,12 @@ export class Main{
 
     createGui(){
         let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        let xmlLoader = new GUI.XmlLoader();
-        xmlLoader.loadLayout("assets/UI/UI.xml", advancedTexture, (layout) => {});
-        // let xmlLoader = 
+        // let xmlLoader = new GUI.XmlLoader();
+        // xmlLoader.loadLayout("assets/UI/UI.xml", advancedTexture, (layout) => {});
         
+        let xmlLoader: BRIX.XmlGUIComponent = this.world.registerComponent(BRIX.XmlGUIComponent);
+        xmlLoader.attachToAdvanceTexture = true;
+        xmlLoader.get().loadLayout("assets/UI/UI.xml", advancedTexture);
         // let asteroidAvailable = new GUI.TextBlock();
         // asteroidAvailable.text = ;
         // asteroidAvailable.color = "white";
