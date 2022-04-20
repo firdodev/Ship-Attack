@@ -59,11 +59,12 @@ export class LaserComponent extends BRIX.Component {
             // console.log("No asteroids");
         }
      }
-
+     //Gets every asteroid mesh based on the name of the object that gets as a parameter
     private getAsteroidMesh(index){
         return ((this.object as BRIX.GameObject).getWorld().getObjectByName(index).getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent).get();
     }
 
+     //Gets every asteroid mesh based on the name of object from world
     private getAsteroid(index){
         return (this.object as BRIX.GameObject).getWorld().getObjectByName(index);
     }

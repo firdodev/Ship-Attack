@@ -11,6 +11,7 @@ import { LaserComponent } from "./Components/LaserComponent"
 import { Asteroid } from "./Asteroid"
 import { ParticleComponent } from "./Components/ParticleComponent"
 import { RocketComponent } from "./Components/RocketComponent"
+import { GameUI } from "./gameUI"
 
 export class Main{
 
@@ -81,16 +82,8 @@ export class Main{
 
         await this.createGrid(2,5); // Create a grid where asteroid can be stored
         
-        var asteroidNumb: GUI.TextBlock = new GUI.TextBlock("AsteroidNum","Asteroid Number: " + Main.arrayOfNames.length);
-        asteroidNumb.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        asteroidNumb.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        asteroidNumb.color = "white";
-        asteroidNumb.fontSize = 20;
-        asteroidNumb.height = "30px";
-        asteroidNumb.width = "200px";
-        asteroidNumb.top = "10px";
-        asteroidNumb.left = "10px";
-        advancedTexture.addControl(asteroidNumb); 
+        let gameUi: GameUI = this.world.registerComponent(GameUI);
+        gameUi.createUI(advancedTexture);
 
 
         this.onReady = onReady;
