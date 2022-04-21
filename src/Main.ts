@@ -64,6 +64,7 @@ export class Main{
     public async setup(onReady: Function) {
         await this.setWorld(null);
         await this.createShip();
+        await this.setupAudio();
         let guiCon: BRIX.GUIContainerComponent = await this.world.registerComponent(BRIX.GUIContainerComponent);
         this.advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI",true, this.world.getScene())
         
@@ -149,9 +150,11 @@ export class Main{
             if(ev.keyCode == 32){
                 if(Main.arrayOfNames.length > 0){
                     await laserComponent.createLaser();
+                    (this.world.getComponentByName("shootingAudio") as BRIX.SoundComponent).play();
                     this.enableToShoot = false;
                     setTimeout(() => {
                         this.text1.text = Main.arrayOfNames.length.toString();
+                        // (this.world.getComponentByName("explosionAudio") as BRIX.SoundComponent).play();
                     }, 1000);
                 }else{
                     console.log("There are no more asteroids.");
@@ -251,6 +254,16 @@ export class Main{
         // gameOverText.top = "50%";
         // gameOverText.left = "50%";
         advancedTexture.addControl(gameOverText);
+    }
+
+    private async setupAudio(){
+        let audio: BRIX.SoundComponent = await this.world.registerComponent(BRIX.SoundComponent);
+        await audio.loadAsync("assets/audio/","shooting.mp3");
+        audio.name = "shootingAudio";
+
+        audio = await this.world.registerComponent(BRIX.SoundComponent);
+        await audio.loadAsync("assets/audio/","explosion.wav");
+        audio.name = "explosionAudio";                                           
     }
 
     private randomIntFromInterval(min, max) { 
