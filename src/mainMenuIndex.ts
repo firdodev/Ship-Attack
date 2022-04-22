@@ -2,7 +2,7 @@ import { MainMenu } from './MainMenu'
 
 
 const view = document.getElementById("view") as HTMLCanvasElement;
-let main = new MainMenu(view);
+let mainmenu = new MainMenu(view);
 
 
 function onReady(){
@@ -15,9 +15,10 @@ function onReady(){
 
     document.getElementById("view").style.display = "block";
 
-    main.getWorld().getEngine().resize();
+    mainmenu.getWorld().getEngine().resize();
 }
 
 (async function() {
-    await main.setup(onReady);
+    debugger;
+    await mainmenu.setup(onReady);
 })();

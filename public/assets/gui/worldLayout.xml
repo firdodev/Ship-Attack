@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<root>
+    <Rectangle left="-20" top="-20" width = "60px" height = "60px" color="red" id="audioContainer" isPointerBlocker="true" verticalAlignment="Control.VERTICAL_ALIGNMENT_BOTTOM" horizontalAlignment="Control.HORIZONTAL_ALIGNMENT_RIGHT">
+      <Image id="audioImage" source="assets/audio/mute.png" />
+    </Rectangle>
+</root>

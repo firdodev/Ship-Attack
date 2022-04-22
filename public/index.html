@@ -35,16 +35,22 @@
                 z-index: 0;
             }
             
+            .mainmenu{
+                width: 100%; height: 100%; background-color: #f9f6ed; position: static; z-index: 6;  
+            }
         </style>
     </head>
     <body>
+        <canvas class="mainmenu" id="mainmenu">
+            <h1>Space Invaders</h1>
+        </canvas>
         <div id="loader" class="loader">
             <div class="container">
                 <span class="helper"></span>
                 <img class="logo" src="loader.gif" alt="Loader Ship">
             </div>
         </div>
-        <canvas class="renderCanvas" id="view"></canvas>
-        
+        <canvas class="renderCanvas" id="view" ></canvas>
+       
     </body>
 </html>

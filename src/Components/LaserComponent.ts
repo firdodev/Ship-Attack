@@ -13,7 +13,7 @@ export class LaserComponent extends BRIX.Component {
     private main: Main = new Main(document.getElementById("view") as HTMLCanvasElement);
     // private asteroid: Asteroid = new Asteroid();
 
-    private shipPosition:BABYLON.Vector3 = new BABYLON.Vector3(0,0,-150);
+    private shipPosition: BABYLON.Vector3 = ((this.object as BRIX.GameObject).getWorld().getObjectByName("player").getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent).get().position;
 
     private bullet: BRIX.GameObject;
     private meshComponent: BRIX.MeshComponent;
@@ -24,6 +24,10 @@ export class LaserComponent extends BRIX.Component {
     private timeCheck = 120;
     
     private boomcomp: ParticleComponent = new ParticleComponent();
+
+
+    //Asteroid
+    private ast_destroyed = false;
 
     constructor(gameObject: BRIX.GameObject, name: String) {
         super(gameObject, name);
@@ -49,8 +53,9 @@ export class LaserComponent extends BRIX.Component {
                     this.getAsteroid(Main.arrayOfNames[i]).dispose();
                     this.bullet.dispose();
                     this.isCreated = false;
-                    this.shipPosition.z = -150;
+                    this.meshComponent.get().position.z += 50;
                     Main.arrayOfNames.splice(i,1);
+                    this.ast_destroyed = true;
                 }else{
                     // console.log("No Collision or Asteroid is out of range");
                 }
@@ -77,7 +82,7 @@ export class LaserComponent extends BRIX.Component {
             this.meshComponent.get().scaling = new BABYLON.Vector3(10,10,10);
             this.meshComponent.get().position = new BABYLON.Vector3(this.shipPosition.x,0,this.shipPosition.z);
             this.meshComponent.get().material.subMaterials[0].emissiveColor = new BABYLON.Color3(50, 0, 0);
-
+            this.meshComponent.get().position.z = this.shipPosition.z;
             this.isCreated = true;
 
         }
@@ -86,15 +91,16 @@ export class LaserComponent extends BRIX.Component {
     updateBeforeRender = () => {
         if(this.isCreated){
             this.meshComponent.move(new BABYLON.Vector3(0,0,8));
-            this.shipPosition.z = this.meshComponent.get().position.z;
             this.checkAsteroidTouching();
             if(this.time >= this.timeCheck){              
                 this.bullet.dispose();
+                this.meshComponent.get().position.z = this.shipPosition.z;
                 this.isCreated = false;
-                this.shipPosition.z = -150;
+                this.meshComponent.get().position.z += 50;
                 this.time = 0;
             }
             this.time += 1;
+
         }
     }
 

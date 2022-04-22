@@ -31,10 +31,6 @@ export class Asteroid extends BRIX.Component{
         this.asteroidMesh.get().material.subMaterials[0].emissiveTexture = new BABYLON.Texture("assets/Asteroid/Emission.jpg", world.getScene(), false, false);
         let lightManager = await this.asteroid.registerComponent(LightManagerComponent);
         lightManager.color2 = new BABYLON.Color3(500,500,500);
-
-        
-        // Asteroid.addAsteroidToArraryObj(this.asteroid);
-        // Asteroid.addAsteroidToArraryMesh(this.asteroidMesh);
         this.ASTEROIDS+=1;
         // console.log("Asteroid Components: ", this.asteroid.components);
         // console.log("Position of Asteroid: " + this.getAsteroidPositon());
@@ -43,13 +39,6 @@ export class Asteroid extends BRIX.Component{
     public getAsteroidPositon(): BABYLON.Vector3{
         return this.asteroidMesh.get().position;
     }
-
-    // public static addAsteroidToArraryObj(asteroid: BRIX.GameObject){
-    //     this.asteroidsCreatedObj.push(asteroid);
-    // }
-    // public static addAsteroidToArraryMesh(asteroid: BRIX.MeshComponent){
-    //     this.asteroidsCreatedMesh.push(asteroid);
-    // }
     public getAsteroidMesh(): BRIX.MeshComponent{
         return this.asteroidMesh;
     }

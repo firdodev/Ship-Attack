@@ -33,8 +33,7 @@ export class Main{
 
     //UI
 
-    private advancedTexture;
-
+    private advancedTexture: GUI.AdvancedDynamicTexture;
 
     private text1;
     private text2;
@@ -67,19 +66,27 @@ export class Main{
         await this.setupAudio();
         let guiCon: BRIX.GUIContainerComponent = await this.world.registerComponent(BRIX.GUIContainerComponent);
         this.advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI",true, this.world.getScene())
+        guiCon.get().parseFromURLAsync("assets/gui/mainmenu.json");
+        let button = guiCon.get().getControlByName("Start_btn");
+        console.log(button);
+        // console.log("Advanced Texture Gui Conateiner ....... ",guiCon.get());
+        // console.log("Advanced Texture ....... ", this.advancedTexture);
+        await this.createGrid(2,2); // Create a grid where asteroid can be stored
         
-        // await this.createRandomShapes(new BABYLON.Color3(0,30,80));
-        // await this.createRandomShapes(new BABYLON.Color3(30,0,80));
-        // await this.createRandomShapes(new BABYLON.Color3(50,0,0));
-        // await this.createRandomShapes(new BABYLON.Color3(30,80,0));
-        // await this.createRandomShapes(new BABYLON.Color3(0,30,0));
-        // await this.createRandomShapes(new BABYLON.Color3(30,0,80));
-        // await this.createRandomShapes(new BABYLON.Color3(50,0,0));
-        // await this.createRandomShapes(new BABYLON.Color3(80,30,0));
-
-        await this.createGrid(2,5); // Create a grid where asteroid can be stored
         
         this.createAsteroidNumberUI(this.advancedTexture);
+
+        var button1 = GUI.Button.CreateSimpleButton("but1", "Back to Main Menu");
+        button1.width = "150px"
+        button1.height = "40px";
+        button1.color = "white";
+        button1.cornerRadius = 20;
+        button1.background = "green";
+        button1.onPointerUpObservable.add(function() {
+            
+        });
+        button1.top = "7%";
+        this.advancedTexture.addControl(button1);
 
         this.onReady = onReady;
     
@@ -92,14 +99,19 @@ export class Main{
     private async setWorld(onReady: Function){
         this.world = new BRIX.World(this.view, BRIX.EngineType.STANDARD, onReady);
         await this.world.init(true, true);
+
+        // var scene2 = new BABYLON.Scene(this.world.getEngine());
+        
+        console.log("Scene.............",this.world.getScene());
+
         const cameraController: BRIX.CameraController = await this.world.registerComponent(BRIX.ArcRotateCameraController);
         cameraController.getCamera().position = new BABYLON.Vector3(0,100,0);
         cameraController.getCamera().radius = 700;
         cameraController.getCamera().alpha = -1.57;
         cameraController.getCamera().beta = -10;
-        cameraController.getCamera().upperRadiusLimit = 700;
-        cameraController.getCamera().lowerRadiusLimit = 500;
-        cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
+        // cameraController.getCamera().upperRadiusLimit = 700;
+        // cameraController.getCamera().lowerRadiusLimit = 500;
+        // cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
 
         let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
         pipeline.hasBloom = true;
@@ -168,7 +180,7 @@ export class Main{
     public static arrayOfNames = [];
 
     async createGrid(rows: number, cols: number){
-        for (let x = -5; x < cols; x++) {
+        for (let x = 0; x < cols; x++) {
             for(let z = 0; z < rows; z++){
                 const grid: BRIX.GameObject = new BRIX.GameObject("grid", this.world);
                 const setShapesComponent :BRIX.SetShapesComponent = await grid.registerComponent(BRIX.SetShapesComponent);
@@ -186,24 +198,6 @@ export class Main{
             }
         }
         
-    }
-
-    //Random Shapes on the background
-    private async createRandomShapes(color: BABYLON.Color3){
-        const randomShapes: BRIX.GameObject = new BRIX.GameObject("randomShapes", this.world);
-        const setShapesComponent :BRIX.SetShapesComponent = await randomShapes.registerComponent(BRIX.SetShapesComponent);
-        setShapesComponent.meshType = BRIX.MeshType.BOX;
-        const meshComponent: BRIX.MeshComponent = ( randomShapes.getComponentByType(BRIX.MeshComponent) as BRIX.MeshComponent);
-        meshComponent.get().visibility = 1;
-        meshComponent.get().position = new BABYLON.Vector3(this.randomIntFromInterval(-300,300),-100,this.randomIntFromInterval(-300,300));
-        meshComponent.get().scaling = new BABYLON.Vector3(35,35,35);
-        // meshComponent.get().material.emissiveColor = new BABYLON.Color3(this.randomIntFromInterval(0.0,1.0),this.randomIntFromInterval(0.0,1.0),this.randomIntFromInterval(0.0,1.0));
-        let standardMaterial = new BABYLON.StandardMaterial("standardMaterial", this.world.getScene());
-        meshComponent.get().material = standardMaterial;
-        standardMaterial.emissiveColor = color;
-        standardMaterial.alpha = 0.5;
-        standardMaterial.backFaceCulling = false;
-
     }
 
     createAsteroidNumberUI(advancedTexture){
@@ -232,7 +226,7 @@ export class Main{
         advancedTexture.addControl(blackBackground);
 
         //Retry button that refresh dhe page on click
-        var button1 = GUI.Button.CreateSimpleButton("but1", "Click Me");
+        var button1 = GUI.Button.CreateSimpleButton("but1", "Back to Main Menu");
         button1.width = "150px"
         button1.height = "40px";
         button1.color = "white";
@@ -251,8 +245,6 @@ export class Main{
         gameOverText.fontSize = 50;
         gameOverText.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_CENTER;
         gameOverText.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
-        // gameOverText.top = "50%";
-        // gameOverText.left = "50%";
         advancedTexture.addControl(gameOverText);
     }
 
