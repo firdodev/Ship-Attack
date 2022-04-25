@@ -64,11 +64,12 @@ export class Main{
         await this.setWorld(null);
         await this.createShip();
         await this.setupAudio();
+        
         let guiCon: BRIX.GUIContainerComponent = await this.world.registerComponent(BRIX.GUIContainerComponent);
         this.advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI",true, this.world.getScene())
-        guiCon.get().parseFromURLAsync("assets/gui/mainmenu.json");
-        let button = guiCon.get().getControlByName("Start_btn");
-        console.log(button);
+        // guiCon.get().parseFromURLAsync("assets/gui/mainmenu.json");
+        // let button = guiCon.get().getControlByName("Start_btn");
+        // console.log(button);
         // console.log("Advanced Texture Gui Conateiner ....... ",guiCon.get());
         // console.log("Advanced Texture ....... ", this.advancedTexture);
         await this.createGrid(2,2); // Create a grid where asteroid can be stored
@@ -76,17 +77,17 @@ export class Main{
         
         this.createAsteroidNumberUI(this.advancedTexture);
 
-        var button1 = GUI.Button.CreateSimpleButton("but1", "Back to Main Menu");
-        button1.width = "150px"
-        button1.height = "40px";
-        button1.color = "white";
-        button1.cornerRadius = 20;
-        button1.background = "green";
-        button1.onPointerUpObservable.add(function() {
+        // var button1 = GUI.Button.CreateSimpleButton("but1", "Back to Main Menu");
+        // button1.width = "150px"
+        // button1.height = "40px";
+        // button1.color = "white";
+        // button1.cornerRadius = 20;
+        // button1.background = "green";
+        // button1.onPointerUpObservable.add(function() {
             
-        });
-        button1.top = "7%";
-        this.advancedTexture.addControl(button1);
+        // });
+        // button1.top = "7%";
+        // this.advancedTexture.addControl(button1);
 
         this.onReady = onReady;
     
