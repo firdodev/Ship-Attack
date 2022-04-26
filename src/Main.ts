@@ -76,7 +76,7 @@ export class Main{
         
         
         this.createAsteroidNumberUI(this.advancedTexture);
-
+        
         // var button1 = GUI.Button.CreateSimpleButton("but1", "Back to Main Menu");
         // button1.width = "150px"
         // button1.height = "40px";
@@ -151,6 +151,8 @@ export class Main{
         const laserComponent = await player.registerComponent(LaserComponent);
         // console.log("Player Components: " , player.components);
 
+        this.createAnimation(meshComponent);
+
         window.addEventListener("keydown", async (ev) => {
             //Movement for the ship
             if(ev.keyCode == 65){
@@ -175,6 +177,23 @@ export class Main{
                 }
             }
         })
+    }
+
+    private createAnimation(mesh: BRIX.MeshComponent){
+        const rotateFrames = [];
+        const fps = 60;
+
+        const rotateAnimation = new BABYLON.Animation("rotateAnim","rotation.z",fps,BABYLON.Animation.ANIMATIONTYPE_FLOAT,BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+        rotateFrames.push({frame:0, value:0});
+        rotateFrames.push({frame:180,value: Math.PI / 2});
+
+
+        rotateAnimation.setKeys(rotateFrames);
+        
+        mesh.get().animations.push(rotateAnimation);
+
+        this.world.getScene().beginAnimation(mesh.get(), 0, 180, true);
     }
 
     public static index = 0;
