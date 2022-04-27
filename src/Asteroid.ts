@@ -32,8 +32,26 @@ export class Asteroid extends BRIX.Component{
         let lightManager = await this.asteroid.registerComponent(LightManagerComponent);
         lightManager.color2 = new BABYLON.Color3(500,500,500);
         this.ASTEROIDS+=1;
+        this.createAnimationAst(this.asteroidMesh);
         // console.log("Asteroid Components: ", this.asteroid.components);
         // console.log("Position of Asteroid: " + this.getAsteroidPositon());
+    }
+
+    private createAnimationAst(mesh: BRIX.MeshComponent){
+        const positionFrames = [];
+        const fps = 60;
+
+        const positionAnimation = new BABYLON.Animation("posAnim","position.y",fps,BABYLON.Animation.ANIMATIONTYPE_FLOAT,BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+        positionFrames.push({frame:0, value:0});
+        positionFrames.push({frame:60,value: 50}); 
+        positionFrames.push({frame:180,value: 0});
+
+        positionAnimation.setKeys(positionFrames);
+        
+        mesh.get().animations.push(positionAnimation);
+
+        (this.object as BRIX.GameObject).getWorld().getScene().beginAnimation(mesh.get(), 0, 180, true);
     }
 
     public getAsteroidPositon(): BABYLON.Vector3{

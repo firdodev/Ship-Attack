@@ -83,9 +83,27 @@ export class LaserComponent extends BRIX.Component {
             this.meshComponent.get().position = new BABYLON.Vector3(this.shipPosition.x,0,this.shipPosition.z);
             this.meshComponent.get().material.subMaterials[0].emissiveColor = new BABYLON.Color3(50, 0, 0);
             this.meshComponent.get().position.z = this.shipPosition.z;
+            //this.meshComponent.get().position.y = this.shipPosition.y;
             this.isCreated = true;
-
+            //this.createAnimationLaser(this.meshComponent);
         }
+    }
+
+    private createAnimationLaser(mesh: BRIX.MeshComponent){
+        const positionFrames = [];
+        const fps = 60;
+
+        const positionAnimation = new BABYLON.Animation("posAnim","position.y",fps,BABYLON.Animation.ANIMATIONTYPE_FLOAT,BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+        positionFrames.push({frame:0, value:this.shipPosition.y});
+        positionFrames.push({frame:60,value: 50}); 
+        positionFrames.push({frame:180,value: this.shipPosition.y});
+
+        positionAnimation.setKeys(positionFrames);
+        
+        mesh.get().animations.push(positionAnimation);
+
+        (this.object as BRIX.GameObject).getWorld().getScene().beginAnimation(mesh.get(), 0, 180, true);
     }
     
     updateBeforeRender = () => {

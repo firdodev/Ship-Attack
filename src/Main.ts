@@ -67,27 +67,9 @@ export class Main{
         
         let guiCon: BRIX.GUIContainerComponent = await this.world.registerComponent(BRIX.GUIContainerComponent);
         this.advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI",true, this.world.getScene())
-        // guiCon.get().parseFromURLAsync("assets/gui/mainmenu.json");
-        // let button = guiCon.get().getControlByName("Start_btn");
-        // console.log(button);
-        // console.log("Advanced Texture Gui Conateiner ....... ",guiCon.get());
-        // console.log("Advanced Texture ....... ", this.advancedTexture);
         await this.createGrid(2,2); // Create a grid where asteroid can be stored
-        
-        
+       
         this.createAsteroidNumberUI(this.advancedTexture);
-        
-        // var button1 = GUI.Button.CreateSimpleButton("but1", "Back to Main Menu");
-        // button1.width = "150px"
-        // button1.height = "40px";
-        // button1.color = "white";
-        // button1.cornerRadius = 20;
-        // button1.background = "green";
-        // button1.onPointerUpObservable.add(function() {
-            
-        // });
-        // button1.top = "7%";
-        // this.advancedTexture.addControl(button1);
 
         this.onReady = onReady;
     
@@ -120,9 +102,12 @@ export class Main{
 
         const lightComponent: BRIX.LightComponent = await this.world.registerComponent(BRIX.HemisphericLightComponent);
         lightComponent.intensity = 0.3;
+
+
         let cubeSkyBox: BRIX.CubeSkyBoxComponent = await this.world.registerComponent(BRIX.CubeSkyBoxComponent);
 		cubeSkyBox.texturePath = "assets/textures/skybox/skybox";
-
+        this.createAnimationSky(cubeSkyBox.get());  
+        
         let glowLayer:BRIX.GlowLayerComponent = await this.world.registerComponent(BRIX.GlowLayerComponent);
         glowLayer.intensity = 1;
         glowLayer.get().blurKernelSize = 92;
@@ -151,7 +136,7 @@ export class Main{
         const laserComponent = await player.registerComponent(LaserComponent);
         // console.log("Player Components: " , player.components);
 
-        this.createAnimation(meshComponent);
+        this.createAnimationShip(meshComponent);
 
         window.addEventListener("keydown", async (ev) => {
             //Movement for the ship
@@ -179,21 +164,39 @@ export class Main{
         })
     }
 
-    private createAnimation(mesh: BRIX.MeshComponent){
-        const rotateFrames = [];
+    private createAnimationShip(mesh: BRIX.MeshComponent){
+        const positionFrames = [];
         const fps = 60;
 
-        const rotateAnimation = new BABYLON.Animation("rotateAnim","rotation.z",fps,BABYLON.Animation.ANIMATIONTYPE_FLOAT,BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+        const positionAnimation = new BABYLON.Animation("posAnim","position.y",fps,BABYLON.Animation.ANIMATIONTYPE_FLOAT,BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
 
-        rotateFrames.push({frame:0, value:0});
-        rotateFrames.push({frame:180,value: Math.PI / 2});
+        positionFrames.push({frame:0, value:0});
+        positionFrames.push({frame:60,value: 50}); 
+        positionFrames.push({frame:180,value: 0});
 
-
-        rotateAnimation.setKeys(rotateFrames);
+        positionAnimation.setKeys(positionFrames);
         
-        mesh.get().animations.push(rotateAnimation);
+        mesh.get().animations.push(positionAnimation);
 
         this.world.getScene().beginAnimation(mesh.get(), 0, 180, true);
+    }
+
+    private createAnimationSky(mesh){
+       
+        const rotationFrames = [];
+        const fps = 60;
+
+        const rotationAnimation = new BABYLON.Animation("rotAnim","rotation.x", fps, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+        rotationFrames.push({frame: 0, value: 0});
+        rotationFrames.push({frame: 2880, value: 2 * Math.PI});
+
+        rotationAnimation.setKeys(rotationFrames);
+
+        mesh.animations.push(rotationAnimation);
+
+        this.world.getScene().beginAnimation(mesh, 0, 2880, true);
+
     }
 
     public static index = 0;
