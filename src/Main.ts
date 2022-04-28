@@ -30,6 +30,8 @@ export class Main{
     public asteroidArray = [];
     public asteroidArrayMesh = [];
 
+    private particles: ParticleComponent = new ParticleComponent();
+
 
     //UI
 
@@ -85,16 +87,16 @@ export class Main{
 
         // var scene2 = new BABYLON.Scene(this.world.getEngine());
         
-        console.log("Scene.............",this.world.getScene());
+        //console.log("Scene.............",this.world.getScene());
 
         const cameraController: BRIX.CameraController = await this.world.registerComponent(BRIX.ArcRotateCameraController);
         cameraController.getCamera().position = new BABYLON.Vector3(0,100,0);
         cameraController.getCamera().radius = 700;
         cameraController.getCamera().alpha = -1.57;
-        cameraController.getCamera().beta = -10;
-        // cameraController.getCamera().upperRadiusLimit = 700;
-        // cameraController.getCamera().lowerRadiusLimit = 500;
-        // cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
+        cameraController.getCamera().beta = 0.5007743951023521;
+        cameraController.getCamera().upperRadiusLimit = 700;
+        cameraController.getCamera().lowerRadiusLimit = 500;
+        cameraController.getCamera().detachControl(this.view); //Removes the controls of the camera
 
         let pipeline: BRIX.DefaultPipelineComponent = await this.world.registerComponent(BRIX.DefaultPipelineComponent);
         pipeline.hasBloom = true;
@@ -111,14 +113,20 @@ export class Main{
         let glowLayer:BRIX.GlowLayerComponent = await this.world.registerComponent(BRIX.GlowLayerComponent);
         glowLayer.intensity = 1;
         glowLayer.get().blurKernelSize = 92;
-      
+
+        this.particles.sparks(this.world.getScene());
+
         this.world.getScene().clearColor = BABYLON.Color3.Black();
 
-        // this.world.getScene().debugLayer.show();
+       // this.world.getScene().debugLayer.show();
         // console.log(this.getWorld().getScene())
         // this.createGui();
 
-
+        window.addEventListener("keydown", async (ev)=>{
+            if(ev.keyCode == 13){
+                console.log("Camera ........ ", cameraController.getCamera());
+            }
+        });
     }
 
     private async createShip(){

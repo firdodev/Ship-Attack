@@ -96,7 +96,7 @@ export class LaserComponent extends BRIX.Component {
         const positionAnimation = new BABYLON.Animation("posAnim","position.y",fps,BABYLON.Animation.ANIMATIONTYPE_FLOAT,BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
 
         positionFrames.push({frame:0, value:this.shipPosition.y});
-        positionFrames.push({frame:60,value: 50}); 
+        positionFrames.push({frame:60,value: this.shipPosition.y}); 
         positionFrames.push({frame:180,value: this.shipPosition.y});
 
         positionAnimation.setKeys(positionFrames);
@@ -108,6 +108,7 @@ export class LaserComponent extends BRIX.Component {
     
     updateBeforeRender = () => {
         if(this.isCreated){
+            this.meshComponent.get().position.y = this.shipPosition.y;
             this.meshComponent.move(new BABYLON.Vector3(0,0,8));
             this.checkAsteroidTouching();
             if(this.time >= this.timeCheck){              

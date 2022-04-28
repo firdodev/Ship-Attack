@@ -7,6 +7,7 @@ import * as BRIX from "@ludum_studios/brix-core"
 import { LightManagerComponent } from "./Components/LightManagerComponent"
 export class Asteroid extends BRIX.Component{
 
+
     public asteroidMesh: BRIX.MeshComponent;
     private asteroidSize = 30;
     public static asteroidsCreatedObj = [];
@@ -69,6 +70,10 @@ export class Asteroid extends BRIX.Component{
     //Destroy asteroid object
     public disposeA(index){
         Asteroid.asteroidsCreatedObj[index].dispose();
+    }
+
+    public randomInt(min, max){
+        return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
 
