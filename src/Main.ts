@@ -32,6 +32,8 @@ export class Main{
 
     private particles: ParticleComponent = new ParticleComponent();
 
+    public gameOver: Boolean = false;
+
 
     //UI
 
@@ -69,7 +71,7 @@ export class Main{
         
         let guiCon: BRIX.GUIContainerComponent = await this.world.registerComponent(BRIX.GUIContainerComponent);
         this.advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI",true, this.world.getScene())
-        await this.createGrid(2,2); // Create a grid where asteroid can be stored
+        await this.createGrid(2,4); // Create a grid where asteroid can be stored
        
         this.createAsteroidNumberUI(this.advancedTexture);
 
@@ -116,7 +118,7 @@ export class Main{
 
         this.particles.sparks(this.world.getScene());
 
-        this.world.getScene().clearColor = BABYLON.Color3.Black();
+        this.world.getScene().clearColor = BABYLON.Color3.White();
 
        // this.world.getScene().debugLayer.show();
         // console.log(this.getWorld().getScene())
@@ -166,7 +168,12 @@ export class Main{
                     }, 1000);
                 }else{
                     console.log("There are no more asteroids.");
-                    this.createEndScreenGui(this.advancedTexture);
+                    //this.world.disposeEngine();
+                    this.gameOver = true;
+                    console.log(document.getElementById("view"));
+                    document.getElementById("view").style.display = "none";
+                    document.getElementById("end").style.display = "block";
+                    //this.createEndScreenGui(this.advancedTexture);
                 }
             }
         })

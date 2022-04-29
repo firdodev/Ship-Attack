@@ -43,7 +43,6 @@
 
             #start-btn{
               display: block;
-              margin: 0;
               position: absolute;
               top: 50%;
               left: 40%;
@@ -58,11 +57,31 @@
             }
 
             #start-btn:hover{
-
               background-color: gray;
               cursor: pointer;
               border-radius: 50px;
               font-size: 60px;
+            }
+
+            #end{
+              display: none;
+              position: absolute;
+              width: 100%;
+              height: 100%;
+            }
+      
+            #end_btn{
+              background: transparent;
+              font-size: 30px;
+              color:white;
+              border:none;
+              transition: 0.25s;
+            }
+
+            #end_btn:hover{
+              cursor:pointer;
+              font-size: 45px;
+
             }
             
         </style>
@@ -79,6 +98,13 @@
           <input type="button" value="Start Game" id="start-btn">
         </div>
         <canvas class="renderCanvas" id="view" ></canvas>
+        <div id="end">
+          <center>
+            <h1>Game Over</h1>
+            <input type="button" value="Return to Main Menu" id="end_btn" onclick="location.reload()">
+          </center>
+        </div>
+
         <!-- <canvas class="mainmenu" id="view2" ></canvas> -->
     </body>
 </html>
